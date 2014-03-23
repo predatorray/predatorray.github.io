@@ -6,8 +6,8 @@
     <atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
     <description>分享知识</description>
     <language>en-us</language>
-    <pubDate>Sun, 23 Mar 2014 19:54:08 +0800</pubDate>
-    <lastBuildDate>Sun, 23 Mar 2014 19:54:08 +0800</lastBuildDate>
+    <pubDate>Sun, 23 Mar 2014 20:00:04 +0800</pubDate>
+    <lastBuildDate>Sun, 23 Mar 2014 20:00:04 +0800</lastBuildDate>
 
     
       <item>
@@ -579,13 +579,7 @@ public class MailServiceStub implements MailService {
         <link>/Mockito%E5%85%AD%E4%B8%AA%E7%AE%80%E5%8D%95%E7%A4%BA%E4%BE%8B</link>
         <pubDate>Sun, 01 Dec 2013 00:00:00 +0800</pubDate>
         <author>Ray</author>
-        <description>&lt;p&gt;...
-layout: post
-comments: true
-title: Mockito六个简单示例
-...&lt;/p&gt;
-
-&lt;p&gt;原文地址：&lt;a href=&quot;http://gojko.net/2009/10/23/mockito-in-six-easy-examples/&quot;&gt;Mockito in six easy examples&lt;/a&gt;&lt;/p&gt;
+        <description>&lt;p&gt;原文地址：&lt;a href=&quot;http://gojko.net/2009/10/23/mockito-in-six-easy-examples/&quot;&gt;Mockito in six easy examples&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;原文作者：&lt;a href=&quot;http://gojko.net/author/admin/&quot;&gt;Gojko Adzic&lt;/a&gt;&lt;/p&gt;
 

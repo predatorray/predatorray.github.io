@@ -1,10 +1,61 @@
-<p>...
-layout: post
-comments: true
-title: Mockito六个简单示例
-...</p>
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- meta information -->
+<meta charset="utf-8">
+<meta name="description" 
+      content="原文地址：[Mockito in six easy examples][1]原文作者：[Gojko Adzic][2][Mockito][3]是个奇妙的Java模拟对象（mock）类库。与其他Java或是.NET模拟对象类库相比，我被..." >
+<meta name="author" content="Ray">
 
-<p>原文地址：<a href="http://gojko.net/2009/10/23/mockito-in-six-easy-examples/">Mockito in six easy examples</a></p>
+<!-- Enable responsiveness on mobile devices-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<!-- title -->
+<title>Mockito六个简单示例 &middot; Ray's Blog</title>
+
+<!-- icons -->
+<link rel="shortcut icon" href="/public/images/favicon.ico" />
+
+<!-- stylesheets -->
+<link rel="stylesheet" href="/public/css/responsive.gs.12col.css">
+<link rel="stylesheet" href="/public/css/animate.min.css">
+<link rel="stylesheet" href="/public/css/main.css">
+<link rel="stylesheet" href="/public/css/prettify.css">
+
+<!-- Google fonts -->
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,400italic&subset=latin-ext">
+
+
+
+<!-- feed links -->
+<link rel="alternate" href="/feed.xml" type="application/rss+xml" title="">
+
+  </head>
+  <body>
+    <div class="container azul">
+      <header class="top row gutters">
+        <div class="col span_2 center">
+          <!-- TODO: add baseurl to the logo link -->
+          <a href="" id="logo" title="Ray's Blog"
+             style="background-image: url(/public/images/logo.png);"></a>
+        </div>
+        <nav class="col span_10 top-navbar">
+  
+  <a href="/" title="主页"
+     >主页</a>
+  
+  <a href="/about" title="关于我"
+     >关于我</a>
+  
+</nav>
+
+      </header>
+
+      <article class="single row gutters">
+  <time class="published" datetime="2013-12-01">01 December 2013</time>
+  <h2>Mockito六个简单示例</h2>
+
+  <p>原文地址：<a href="http://gojko.net/2009/10/23/mockito-in-six-easy-examples/">Mockito in six easy examples</a></p>
 
 <p>原文作者：<a href="http://gojko.net/author/admin/">Gojko Adzic</a></p>
 
@@ -95,3 +146,42 @@ public void OutputStreamWriter_Buffers_And_Forwards_To_OutputStream()
 }
 </code></pre></div>
 <p>就说到这里，这些已经包含了你所需要了解的基础知识。现在开始深入学习，重构你那些丑陋的<a href="http://easymock.org/">easymock</a>代码吧。</p>
+
+</article>
+
+	  
+      <div id="disqus_thread"></div>
+      <script type="text/javascript">
+          /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+          var disqus_shortname = 'predatorray'; // required: replace example with your forum shortname
+
+          /* * * DON'T EDIT BELOW THIS LINE * * */
+          (function() {
+              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+      </script>
+      <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+      <footer>
+        <p>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/deed.en_US">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
+        </p>
+      </footer>
+    </div>
+
+    <!-- scripts -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/public/js/jquery.fitvids.js"></script>
+    <script src="/public/js/prettify.js"></script>
+    <script>
+      $(document).ready(function(){
+        $("article").fitVids();
+		$("pre").addClass("prettyprint");
+		prettyPrint();
+      });
+    </script>
+  </body>
+</html>
