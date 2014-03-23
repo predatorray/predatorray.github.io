@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Brume</title>
+    <title>Ray's Blog</title>
     <link></link>
     <atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
-    <description>It's simple. It's easy to use. It's a Jekyll theme.</description>
+    <description>分享知识</description>
     <language>en-us</language>
-    <pubDate>Sun, 23 Mar 2014 19:30:37 +0800</pubDate>
-    <lastBuildDate>Sun, 23 Mar 2014 19:30:37 +0800</lastBuildDate>
+    <pubDate>Sun, 23 Mar 2014 19:37:46 +0800</pubDate>
+    <lastBuildDate>Sun, 23 Mar 2014 19:37:46 +0800</lastBuildDate>
 
     
       <item>
         <title>Java原子循环计数器</title>
         <link>/Java%E5%8E%9F%E5%AD%90%E5%BE%AA%E7%8E%AF%E8%AE%A1%E6%95%B0%E5%99%A8</link>
         <pubDate>Wed, 12 Mar 2014 00:00:00 +0800</pubDate>
-        <author>Aigars Dzerviniks</author>
+        <author>Ray</author>
         <description>&lt;p&gt;最近在折腾JDBC工具类，自己写了一个&lt;code&gt;DataSource&lt;/code&gt;的&lt;a href=&quot;https://github.com/predatorray/jdbc-utils/blob/facab22dfa274aa702917f223768f6e6e9290497/src/main/java/me/predatorray/jdbc/datasource/RoundRobin.java&quot;&gt;RoundRobin负载均衡器&lt;/a&gt;，其中就碰到了一个原子循环计数器的问题。&lt;/p&gt;
 
 &lt;p&gt;我们知道，在JDK的cocurrent包中包含了一系列的原子操作的工具类，如&lt;code&gt;AtomicInteger&lt;/code&gt;，&lt;code&gt;AtomicLong&lt;/code&gt;，&lt;code&gt;AtomicReference&lt;/code&gt;等。通过使用这些已有的工具类，我们可以十分方便地实现无锁的替换、递增和递减等操作。&lt;/p&gt;
@@ -104,7 +104,7 @@ return unsafe.compareAndSwapInt(this, valueOffset, expect, update);
         <title>使用update-alternatives配置jdk</title>
         <link>/%E4%BD%BF%E7%94%A8update-alternatives%E9%85%8D%E7%BD%AEjdk</link>
         <pubDate>Sun, 23 Feb 2014 00:00:00 +0800</pubDate>
-        <author>Aigars Dzerviniks</author>
+        <author>Ray</author>
         <description>&lt;p&gt;原文地址：&lt;a href=&quot;http://www.codinginahurry.com/2010/12/29/how-to-setup-up-a-new-jdk-with-update-alternatives/&quot;&gt;How to setup up a new JDK with update-alternatives?&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;code&gt;update-alternatives&lt;/code&gt; 是一个十分好用、聪明的工具，特别适用于那些需要维护不同版本SDK的开发者。我经常使用它的这个功能来管理不同的Ruby版本、JDK版本以及其他的一些SDK，但是我每次都需要上Google搜如何使用。我发现每次都需要去google很浪费时间，于是我最后决定学一下它的用法，然后发现其实并不复杂。事实上，你只需要记住几个参数。&lt;/p&gt;
@@ -173,7 +173,7 @@ sudo update-alternatives --install javaws javavs /opt/jdk1.5.0_22_64bit
         <title>在Ubuntu上运行Dokku</title>
         <link>/%E5%9C%A8Ubuntu%E4%B8%8A%E8%BF%90%E8%A1%8CDokku</link>
         <pubDate>Tue, 28 Jan 2014 00:00:00 +0800</pubDate>
-        <author>Aigars Dzerviniks</author>
+        <author>Ray</author>
         <description>&lt;p&gt;&lt;a href=&quot;https://github.com/progrium/dokku&quot;&gt;Dokku&lt;/a&gt;是一个小型的PAAS平台，支持Ruby、Node.js、Java、Play!、Python、PHP、Clojure、Go、Dart。其实就是一个小型的&lt;a href=&quot;https://www.heroku.com/&quot;&gt;Heroku&lt;/a&gt;云平台。可以使用简易的方式部署小型应用（只需用&lt;code&gt;git&lt;/code&gt;将代码&lt;code&gt;push&lt;/code&gt;到对应的仓库就自动触发部署）。下面来介绍一下如何在Ubuntu上安装及配置Dokku的。&lt;/p&gt;
 
 &lt;p&gt;下述的安装方式是基于Ubuntu 12.04.3 x32版本的，对于更高版本的Ubuntu系统，其安装方式基本是类似的。安装的过程十分简单，许多过程是依靠提供的脚本自动完成的，你只需要了解一些基本的Linux操作知识就足够了。&lt;/p&gt;
@@ -256,7 +256,7 @@ git remote add dokku dokku@&amp;lt;你的dokku服务器，例如example.com&amp;
         <title>Mock并非Stub</title>
         <link>/Mock%E5%B9%B6%E9%9D%9EStub</link>
         <pubDate>Fri, 13 Dec 2013 00:00:00 +0800</pubDate>
-        <author>Aigars Dzerviniks</author>
+        <author>Ray</author>
         <description>&lt;p&gt;原文地址：&lt;a href=&quot;http://martinfowler.com/articles/mocksArentStubs.html&quot;&gt;Mocks Aren&amp;#39;t Stubs&lt;/a&gt;（2007-01-02）&lt;/p&gt;
 
 &lt;p&gt;原文作者：&lt;a href=&quot;http://martinfowler.com/&quot;&gt;Martin Fowler&lt;/a&gt;&lt;/p&gt;
@@ -553,7 +553,7 @@ public class MailServiceStub implements MailService {
         <title>静态方法扼杀了可测性</title>
         <link>/%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95%E6%89%BC%E6%9D%80%E4%BA%86%E5%8F%AF%E6%B5%8B%E6%80%A7</link>
         <pubDate>Mon, 02 Dec 2013 00:00:00 +0800</pubDate>
-        <author>Aigars Dzerviniks</author>
+        <author>Ray</author>
         <description>&lt;p&gt;原文地址：&lt;a href=&quot;http://googletesting.blogspot.com/2008/12/static-methods-are-death-to-testability.html&quot;&gt;Static Methods are Death to Testability&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;原文作者：&lt;a href=&quot;http://misko.hevery.com/about/&quot;&gt;Miško Hevery&lt;/a&gt;&lt;/p&gt;
@@ -578,7 +578,7 @@ public class MailServiceStub implements MailService {
         <title>Mockito六个简单示例</title>
         <link>/Mockito%E5%85%AD%E4%B8%AA%E7%AE%80%E5%8D%95%E7%A4%BA%E4%BE%8B</link>
         <pubDate>Sun, 01 Dec 2013 00:00:00 +0800</pubDate>
-        <author>Aigars Dzerviniks</author>
+        <author>Ray</author>
         <description>&lt;p&gt;原文地址：&lt;a href=&quot;http://gojko.net/2009/10/23/mockito-in-six-easy-examples/&quot;&gt;Mockito in six easy examples&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;原文作者：&lt;a href=&quot;http://gojko.net/author/admin/&quot;&gt;Gojko Adzic&lt;/a&gt;&lt;/p&gt;
