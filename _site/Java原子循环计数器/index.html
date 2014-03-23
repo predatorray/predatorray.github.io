@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- meta information -->
+<meta charset="utf-8">
+<meta name="description" 
+      content="最近在折腾JDBC工具类，自己写了一个`DataSource`的[RoundRobin负载均衡器][1]，其中就碰到了一个原子循环计数器的问题。我们知道，在JDK的cocurrent包中包含了一系列的原子操作的工具类，如`Atomic..." >
+<meta name="author" content="Aigars Dzerviniks">
+
+<!-- Enable responsiveness on mobile devices-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<!-- title -->
+<title>Java原子循环计数器 &middot; Brume</title>
+
+<!-- icons -->
+<link rel="shortcut icon" href="/public/images/favicon.ico" />
+
+<!-- stylesheets -->
+<link rel="stylesheet" href="/public/css/responsive.gs.12col.css">
+<link rel="stylesheet" href="/public/css/animate.min.css">
+<link rel="stylesheet" href="/public/css/main.css">
+
+<!-- Google fonts -->
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,400italic&subset=latin-ext">
+
+
+
+<!-- feed links -->
+<link rel="alternate" href="/feed.xml" type="application/rss+xml" title="">
+
+  </head>
+  <body>
+    <div class="container azul">
+      <header class="top row gutters">
+        <div class="col span_2 center">
+          <!-- TODO: add baseurl to the logo link -->
+          <a href="" id="logo" title="Brume"
+             style="background-image: url(/public/images/logo.png);"></a>
+        </div>
+        <nav class="col span_10 top-navbar">
+  
+  <a href="/" title="Home"
+     >Home</a>
+  
+  <a href="/about" title="About"
+     >About</a>
+  
+</nav>
+
+      </header>
+
+      <article class="single row gutters">
+  <time class="published" datetime="2014-03-12">12 March 2014</time>
+  <h2>Java原子循环计数器</h2>
+
+  <p>最近在折腾JDBC工具类，自己写了一个<code>DataSource</code>的<a href="https://github.com/predatorray/jdbc-utils/blob/facab22dfa274aa702917f223768f6e6e9290497/src/main/java/me/predatorray/jdbc/datasource/RoundRobin.java">RoundRobin负载均衡器</a>，其中就碰到了一个原子循环计数器的问题。</p>
+
+<p>我们知道，在JDK的cocurrent包中包含了一系列的原子操作的工具类，如<code>AtomicInteger</code>，<code>AtomicLong</code>，<code>AtomicReference</code>等。通过使用这些已有的工具类，我们可以十分方便地实现无锁的替换、递增和递减等操作。</p>
+
+<p>例如，原本如下线程不安全的计数器实现，</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">public class NotThreadSafeCounter implements Counter {
+
+    private int counterVal = 0;
+
+    @Override
+    public int next() {
+        return counterVal++;
+    }
+}
+</code></pre></div>
+<p>可以替换为</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">public class ThreadSafeCounter implements Counter {
+
+    private final AtomicInteger counterVal = new AtomicInteger(0);
+
+    @Override
+    public int next() {
+        return counterVal.getAndIncrement();
+    }
+}
+</code></pre></div>
+<p>从而适合于多线程并发环境下使用。那如何通过利用这些已有工具类来实现循环计数器呢？我们可以先看一下concurrent包中的<code>AtomicInteger.getAndIncrement()</code>是如何实现的。</p>
+
+<p>以下是来自JDK 1.6的源码：</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">/**
+ * Atomically increments by one the current value.
+ *
+ * @return the previous value
+ */
+public final int getAndIncrement() {
+    for (;;) {
+        int current = get();
+        int next = current + 1;
+        if (compareAndSet(current, next))
+            return current;
+    }
+}
+</code></pre></div>
+<p>其中<code>get()</code>的实现十分简单，直接返回了内部的<code>private volatile int value</code>变量。而<code>compareAndSet(current, next)</code>方法直接调用了底层的<a href="http://en.wikipedia.org/wiki/Compare-and-swap">Compare-and-swap</a>指令操作，</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">/**
+ * Atomically sets the value to the given updated value
+ * if the current value {@code ==} the expected value.
+ *
+ * @param expect the expected value
+ * @param update the new value
+ * @return true if successful. False return indicates that
+ * the actual value was not equal to the expected value.
+ */
+public final boolean compareAndSet(int expect, int update) {
+return unsafe.compareAndSwapInt(this, valueOffset, expect, update);
+}
+</code></pre></div>
+<p>也就是从机器指令层面上实现了原子替换操作，即仅在比较成立的情况下作替换操作。关于CAS可以详见上面的那个链接，这里就不展开了。根据上面的javadoc，<code>compareAndSet</code>方法的返回表明了这次操作是否成功执行。<code>getAndIncrement</code>方法就是通过这个返回是否成功的信息，在一个死循环中不断尝试，直到成功为止。现在我们就可以模仿这种不断尝试替换的模式来实现我们的循环计数器。</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">public class RoundRobinCounter implements Counter {
+
+    private final int maxIndex;
+    private AtomicInteger counter = new AtomicInteger(0);
+
+    public RoundRobinCounter(int maxIndex) {
+        Check.argumentIsPositive(maxIndex,
+                &quot;maxIndex must be a positive number&quot;);
+        this.maxIndex = maxIndex;
+    }
+
+    @Override
+    public int next() {
+        while (true) {
+            int current = counter.get();
+            int next = (current + 1) % maxIndex;
+            if (counter.compareAndSet(current, next)) {
+                return current;
+            }
+        }
+    }
+}
+</code></pre></div>
+<p>通过比较<code>AtomicInteger.getAndIncrement()</code>的实现不难发现，其实就是把原本<code>int next = current + 1;</code>替换成了<code>int next = (current + 1) % maxIndex;</code>，使得每次当要递增达到最大上限时，变为0（此时<code>maxIndex % maxIndex = 0</code>）。</p>
+
+</article>
+
+
+      <footer>
+        <p>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/deed.en_US">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
+        </p>
+      </footer>
+    </div>
+
+    <!-- scripts -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/public/js/jquery.fitvids.js"></script>
+    <script>
+      $(document).ready(function(){
+        $("article").fitVids();
+      });
+    </script>
+  </body>
+</html>

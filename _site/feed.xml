@@ -6,9 +6,99 @@
     <atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
     <description>It's simple. It's easy to use. It's a Jekyll theme.</description>
     <language>en-us</language>
-    <pubDate>Sun, 23 Mar 2014 18:34:15 +0800</pubDate>
-    <lastBuildDate>Sun, 23 Mar 2014 18:34:15 +0800</lastBuildDate>
+    <pubDate>Sun, 23 Mar 2014 18:46:28 +0800</pubDate>
+    <lastBuildDate>Sun, 23 Mar 2014 18:46:28 +0800</lastBuildDate>
 
+    
+      <item>
+        <title>Java原子循环计数器</title>
+        <link>/Java%E5%8E%9F%E5%AD%90%E5%BE%AA%E7%8E%AF%E8%AE%A1%E6%95%B0%E5%99%A8</link>
+        <pubDate>Wed, 12 Mar 2014 00:00:00 +0800</pubDate>
+        <author>Aigars Dzerviniks</author>
+        <description>&lt;p&gt;最近在折腾JDBC工具类，自己写了一个&lt;code&gt;DataSource&lt;/code&gt;的&lt;a href=&quot;https://github.com/predatorray/jdbc-utils/blob/facab22dfa274aa702917f223768f6e6e9290497/src/main/java/me/predatorray/jdbc/datasource/RoundRobin.java&quot;&gt;RoundRobin负载均衡器&lt;/a&gt;，其中就碰到了一个原子循环计数器的问题。&lt;/p&gt;
+
+&lt;p&gt;我们知道，在JDK的cocurrent包中包含了一系列的原子操作的工具类，如&lt;code&gt;AtomicInteger&lt;/code&gt;，&lt;code&gt;AtomicLong&lt;/code&gt;，&lt;code&gt;AtomicReference&lt;/code&gt;等。通过使用这些已有的工具类，我们可以十分方便地实现无锁的替换、递增和递减等操作。&lt;/p&gt;
+
+&lt;p&gt;例如，原本如下线程不安全的计数器实现，&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;public class NotThreadSafeCounter implements Counter {
+
+    private int counterVal = 0;
+
+    @Override
+    public int next() {
+        return counterVal++;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;可以替换为&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;public class ThreadSafeCounter implements Counter {
+
+    private final AtomicInteger counterVal = new AtomicInteger(0);
+
+    @Override
+    public int next() {
+        return counterVal.getAndIncrement();
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;从而适合于多线程并发环境下使用。那如何通过利用这些已有工具类来实现循环计数器呢？我们可以先看一下concurrent包中的&lt;code&gt;AtomicInteger.getAndIncrement()&lt;/code&gt;是如何实现的。&lt;/p&gt;
+
+&lt;p&gt;以下是来自JDK 1.6的源码：&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;/**
+ * Atomically increments by one the current value.
+ *
+ * @return the previous value
+ */
+public final int getAndIncrement() {
+    for (;;) {
+        int current = get();
+        int next = current + 1;
+        if (compareAndSet(current, next))
+            return current;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;其中&lt;code&gt;get()&lt;/code&gt;的实现十分简单，直接返回了内部的&lt;code&gt;private volatile int value&lt;/code&gt;变量。而&lt;code&gt;compareAndSet(current, next)&lt;/code&gt;方法直接调用了底层的&lt;a href=&quot;http://en.wikipedia.org/wiki/Compare-and-swap&quot;&gt;Compare-and-swap&lt;/a&gt;指令操作，&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;/**
+ * Atomically sets the value to the given updated value
+ * if the current value {@code ==} the expected value.
+ *
+ * @param expect the expected value
+ * @param update the new value
+ * @return true if successful. False return indicates that
+ * the actual value was not equal to the expected value.
+ */
+public final boolean compareAndSet(int expect, int update) {
+return unsafe.compareAndSwapInt(this, valueOffset, expect, update);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;也就是从机器指令层面上实现了原子替换操作，即仅在比较成立的情况下作替换操作。关于CAS可以详见上面的那个链接，这里就不展开了。根据上面的javadoc，&lt;code&gt;compareAndSet&lt;/code&gt;方法的返回表明了这次操作是否成功执行。&lt;code&gt;getAndIncrement&lt;/code&gt;方法就是通过这个返回是否成功的信息，在一个死循环中不断尝试，直到成功为止。现在我们就可以模仿这种不断尝试替换的模式来实现我们的循环计数器。&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;public class RoundRobinCounter implements Counter {
+
+    private final int maxIndex;
+    private AtomicInteger counter = new AtomicInteger(0);
+
+    public RoundRobinCounter(int maxIndex) {
+        Check.argumentIsPositive(maxIndex,
+                &amp;quot;maxIndex must be a positive number&amp;quot;);
+        this.maxIndex = maxIndex;
+    }
+
+    @Override
+    public int next() {
+        while (true) {
+            int current = counter.get();
+            int next = (current + 1) % maxIndex;
+            if (counter.compareAndSet(current, next)) {
+                return current;
+            }
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;通过比较&lt;code&gt;AtomicInteger.getAndIncrement()&lt;/code&gt;的实现不难发现，其实就是把原本&lt;code&gt;int next = current + 1;&lt;/code&gt;替换成了&lt;code&gt;int next = (current + 1) % maxIndex;&lt;/code&gt;，使得每次当要递增达到最大上限时，变为0（此时&lt;code&gt;maxIndex % maxIndex = 0&lt;/code&gt;）。&lt;/p&gt;
+</description>
+      </item>
     
       <item>
         <title>Demo post</title>
@@ -94,6 +184,480 @@
 &lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Sed imperdiet interdum ultrices. Phasellus iaculis porttitor lorem nec scelerisque. Suspendisse eros urna, adipiscing vel luctus at, feugiat sit amet arcu. Aliquam porttitor ut urna pellentesque sagittis. Donec pellentesque venenatis diam sit amet cursus. Etiam luctus, metus quis gravida fermentum, tortor arcu consequat metus, eget viverra augue risus ac dui. Fusce faucibus scelerisque quam eu sagittis. Sed sit amet sapien non augue lobortis adipiscing. Sed sagittis at lectus eu tempus. Nulla non nulla ut ante condimentum mattis vel at lectus. Nulla ultricies dui et urna semper ultrices. Sed neque ante, dictum in dignissim luctus, facilisis ornare odio. Aenean tempor ultrices magna non pharetra. Curabitur vulputate nec est aliquet suscipit. Etiam ipsum sapien, dictum quis tristique vel, pretium at elit.&lt;/p&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>使用update-alternatives配置jdk</title>
+        <link>/%E4%BD%BF%E7%94%A8update-alternatives%E9%85%8D%E7%BD%AEjdk</link>
+        <pubDate>Sun, 23 Feb 2014 00:00:00 +0800</pubDate>
+        <author>Aigars Dzerviniks</author>
+        <description>&lt;p&gt;原文地址：&lt;a href=&quot;http://www.codinginahurry.com/2010/12/29/how-to-setup-up-a-new-jdk-with-update-alternatives/&quot;&gt;How to setup up a new JDK with update-alternatives?&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;update-alternatives&lt;/code&gt; 是一个十分好用、聪明的工具，特别适用于那些需要维护不同版本SDK的开发者。我经常使用它的这个功能来管理不同的Ruby版本、JDK版本以及其他的一些SDK，但是我每次都需要上Google搜如何使用。我发现每次都需要去google很浪费时间，于是我最后决定学一下它的用法，然后发现其实并不复杂。事实上，你只需要记住几个参数。&lt;/p&gt;
+
+&lt;p&gt;首先，我们需要知道这个工具是用来干嘛的。它是用来管理默认命令的符号链接（symbolic link）的。你可以创建、删除、维护以及显示关于这个符号链接的信息，而这些信息是使用一个替换系统来管理的。它最早在Debian系统中实现。除此之外还有其他系统有再实现的版本，其中一个就是Ubuntu。&lt;/p&gt;
+
+&lt;p&gt;其中，有两个主要的概念：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt; 链接组（link groups）：一系列相关的符号链接，它们会以一个组的形式被更新&lt;/li&gt;
+&lt;li&gt; 链接： 
+
+&lt;ul&gt;
+&lt;li&gt;  主链接：它决定了这个组中其他链接的配置&lt;/li&gt;
+&lt;li&gt;  附链接：它被组中主链接的设置控制&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;接下来让我举一个实际的例子，使用update-alternatives配置一个新装的JDK（Java Development Kit）。首先我们需要知道什么是JDK，就如它的名字一样，它是一个开发基于JVM（Java虚拟机）应用所需的开发包，和其他的SDK一样，其中有许多命令行工具。我们假设在我们的系统中已经有了其他的JDK版本，我们需要配置JDK中这些命令行工具，使它们作为一个组同时生效。我们不希望这些命令行工具中出现版本不一致的情况。它们应当同时生效，如果我切换一个版本，那于此同时这个组中所有的命令行将一起切换。&lt;/p&gt;
+
+&lt;p&gt;JDK包括如下命令行工具：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;  jar&lt;/li&gt;
+&lt;li&gt;  jarsigner&lt;/li&gt;
+&lt;li&gt;  &lt;strong&gt;java&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;  javac&lt;/li&gt;
+&lt;li&gt;  javadoc&lt;/li&gt;
+&lt;li&gt;  javah&lt;/li&gt;
+&lt;li&gt;  javap&lt;/li&gt;
+&lt;li&gt;  javaws&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;首先，我们需要决定在这个组中，哪个将充当主链接。事实上，这个是我的习惯，因为我喜欢将它们一起切换。你可能喜欢其他形式的组合，这个随你的使用习惯而定。对我来说，我会把&lt;code&gt;java&lt;/code&gt;作为主链接。&lt;/p&gt;
+
+&lt;p&gt;以下是安装一个替代链接（alternative）的语法。通常，你只需要决定链接的名称、组、实际可执行的位置以及优先级。&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;--install link name path priority [--slave link name path]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;然后我们把这些命令行安装到替代链接系统中。我们会把&lt;code&gt;java&lt;/code&gt;作为主链接、其他作为附链接，安装到java组中。我们可以通过简单地执行如下的命令来完成：&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;sudo update-alternatives --install java java /opt/jdk1.5.0_22_64bit/bin/java  200 \
+--slave jar java /opt/jdk1.5.0_22_64bit/bin/jar \ 
+--slave jarsigner java /opt/jdk1.5.0_22_64bit/bin/jarsigner \ 
+--slave javac java /opt/jdk1.5.0_22_64bit/bin/javac \
+--slave javadoc java /opt/jdk1.5.0_22_64bit/bin/javadoc \ 
+--slave javah java /opt/jdk1.5.0_22_64bit/bin/javah \
+--slave javap java /opt/jdk1.5.0_22_64bit/bin/javap \
+--slave javaws java /opt/jdk1.5.0_22_64bit/bin/javaws
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;另一种方式，可以把所有的命令行作为不同组的主链接来安装。但是，这意味着如果你想要切换成另一个版本的JDK，你需要一个一个的切换。如下是这种方式的命令：&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;sudo update-alternatives --install java java /opt/jdk1.5.0_22_64bit/bin/java  200
+sudo update-alternatives --install jar jar /opt/jdk1.5.0_22_64bit/bin/jar  
+sudo update-alternatives --install jarsigner jarsigner /opt/jdk1.5.0_22_64bit/bin/jarsigner 
+sudo update-alternatives --install javac javac /opt/jdk1.5.0_22_64bit/bin/javac
+sudo update-alternatives --install javadoc javadoc /opt/jdk1.5.0_22_64bit/bin/javadoc 
+sudo update-alternatives --install javah javah /opt/jdk1.5.0_22_64bit/bin/javah
+sudo update-alternatives --install javap javap /opt/jdk1.5.0_22_64bit/bin/javap
+sudo update-alternatives --install javaws javavs /opt/jdk1.5.0_22_64bit
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;或者，你还可以同时使用上述的两种方式，你可以分别创建多个链接组以及多个主链接。例如，把java运行时环境相关的命令行安装为以java为主链接的同一个组；把java开发环境相关的命令行安装为以javac为主链接的同一个组。&lt;/p&gt;
+
+&lt;p&gt;个人比较喜欢第一种选择，你可以选择你喜欢的方式。&lt;/p&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>在Ubuntu上运行Dokku</title>
+        <link>/%E5%9C%A8Ubuntu%E4%B8%8A%E8%BF%90%E8%A1%8CDokku</link>
+        <pubDate>Tue, 28 Jan 2014 00:00:00 +0800</pubDate>
+        <author>Aigars Dzerviniks</author>
+        <description>&lt;p&gt;&lt;a href=&quot;https://github.com/progrium/dokku&quot;&gt;Dokku&lt;/a&gt;是一个小型的PAAS平台，支持Ruby、Node.js、Java、Play!、Python、PHP、Clojure、Go、Dart。其实就是一个小型的&lt;a href=&quot;https://www.heroku.com/&quot;&gt;Heroku&lt;/a&gt;云平台。可以使用简易的方式部署小型应用（只需用&lt;code&gt;git&lt;/code&gt;将代码&lt;code&gt;push&lt;/code&gt;到对应的仓库就自动触发部署）。下面来介绍一下如何在Ubuntu上安装及配置Dokku的。&lt;/p&gt;
+
+&lt;p&gt;下述的安装方式是基于Ubuntu 12.04.3 x32版本的，对于更高版本的Ubuntu系统，其安装方式基本是类似的。安装的过程十分简单，许多过程是依靠提供的脚本自动完成的，你只需要了解一些基本的Linux操作知识就足够了。&lt;/p&gt;
+
+&lt;h2&gt;安装&lt;/h2&gt;
+
+&lt;p&gt;首先使用&lt;code&gt;root&lt;/code&gt;账户登录你的Ubuntu服务器。（在本机上测试的话，只需要&lt;code&gt;su&lt;/code&gt;切换一下用户就好了）&lt;/p&gt;
+
+&lt;p&gt;安装必需的软件包（通常，只有在Ubuntu 12.04版本需要执行下面的步骤，对于更高的版本可以跳过）&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;apt-get install -y python-software-properties
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;执行下面的脚本，自动完成整个Dokku的下载与安装&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;wget -qO- https://raw.github.com/progrium/dokku/v0.2.1/bootstrap.sh | sudo DOKKU_TAG=v0.2.1 bash
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;这个过程大约需要5分钟时间。&lt;/p&gt;
+
+&lt;h2&gt;配置&lt;/h2&gt;
+
+&lt;p&gt;等待其自动安装完毕之后，就可以开始配置Dokku了。通常有如下两种Dokku应用的发布方式：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt; 将Dokku发布在某个特定的域名的子域名下。应用将发布在类似&lt;code&gt;http://&amp;lt;应用名称&amp;gt;.&amp;lt;域名&amp;gt;:80&lt;/code&gt;的url上面。&lt;/li&gt;
+&lt;li&gt; 将Dokku发布在一个自动分配的端口上面。应用则会以&lt;code&gt;http://&amp;lt;域名&amp;gt;:&amp;lt;自动分配的端口&amp;gt;&lt;/code&gt;形式访问，然后可以通过配置nginx把某个特定的路径来转发到这个应用上。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;对于第一种方式，需要当前的服务器已配置主机名。通过修改&lt;code&gt;/home/dokku/VHOST&lt;/code&gt;来指定自己应用的根域名。并且还需要这个根域名的DNS记录，比较麻烦也不常用，因此接下来主要讲一下第二种。&lt;/p&gt;
+
+&lt;p&gt;在安装结束后，进入&lt;code&gt;/home/dokku&lt;/code&gt;目录，&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;cd /home/dokku
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;如果已存在&lt;code&gt;/home/dokku/VHOST&lt;/code&gt;文件，则暂时删除它（这里我们使用重命名的方式），&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;mv /home/dokku/VHOST /home/dokku/VHOST~
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;然后，为了方便在部署完应用后定位应用实际的url，我们需要在&lt;code&gt;/home/dokku/HOSTNAME&lt;/code&gt;设置自己的主机名或是域名，&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;echo &amp;quot;&amp;lt;你的主机名，如localhost、example.com&amp;gt;&amp;quot; &amp;gt; /home/dokku/HOSTNAME
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;由于dokku使用的&lt;code&gt;git&lt;/code&gt;来完成应用的部署，我们需要将我们的公钥上传到dokku上，使dokku能验证我们的身份。&lt;/p&gt;
+
+&lt;p&gt;如果你还没有生成自己的公钥和私钥的话，在你的本机上（不是服务器）运行如下命令，来生成。&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;ssh-keygen -t rsa
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;生成一对公钥和私钥后，我们需要把公钥上传到服务器上，在你的本机上运行如下命令，（这里我们假设你使用默认的配置，把密钥都生成在&lt;code&gt;~/.ssh目录下，并且名称为id_rsa&lt;/code&gt;）&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;cat ~/.ssh/id_rsa.pub | ssh root@&amp;lt;你的服务器&amp;gt; &amp;quot;sudo sshcommand acl-add dokku progrium&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;这样，你就完成了配置，可以开始部署你的应用了。&lt;/p&gt;
+
+&lt;h2&gt;部署&lt;/h2&gt;
+
+&lt;p&gt;接下来，我示范一下如何部署一个由Heroku提供的node.js的示例应用。&lt;/p&gt;
+
+&lt;p&gt;首先在本机上使用git克隆这个项目，&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;git clone https://github.com/heroku/node-js-sample -o sample
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;接着添加我们刚配置好的dokku应用地址，&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;cd node-js-sample
+git remote add dokku dokku@&amp;lt;你的dokku服务器，例如example.com&amp;gt;:&amp;lt;应用名称，例如node-js-app&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;把示例应用推送到服务器上，&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;git push dokku master
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;在&lt;code&gt;push&lt;/code&gt;的时候，dokku自动触发了部署脚本，在一小段时间的等待后，会有如下的输出，&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;-----&amp;gt; Building runtime environment
+-----&amp;gt; Discovering process types
+       Procfile declares types -&amp;gt; web
+-----&amp;gt; Releasing node-js-app ...
+-----&amp;gt; Deploying node-js-app ...
+-----&amp;gt; Cleaning up ...
+=====&amp;gt; Application deployed:
+       http://&amp;lt;你的dokku服务器&amp;gt;:&amp;lt;端口&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;访问上述输出最后一段的url就能看到&lt;code&gt;Hello World!&lt;/code&gt;了。接下来，你可以通过配置nginx，把80端口转发到这个端口上来。&lt;/p&gt;
+
+&lt;p&gt;如果想直接使用而不想自己配置的话，可以试一下&lt;a href=&quot;https://www.digitalocean.com/?refcode=94565696c539&quot;&gt;DigitalOcean&lt;/a&gt;自动配置的Dokku应用。当然你也可以使用他们提供的云主机，从零开始配置，下面是DigitalOcean的链接。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.digitalocean.com/?refcode=94565696c539&quot;&gt;&lt;img src=&quot;http://www.predatorray.me/wp-content/uploads/2014/01/ssd-virtual-servers-banner-2-728x90.jpg&quot; alt=&quot;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>Mock并非Stub</title>
+        <link>/Mock%E5%B9%B6%E9%9D%9EStub</link>
+        <pubDate>Fri, 13 Dec 2013 00:00:00 +0800</pubDate>
+        <author>Aigars Dzerviniks</author>
+        <description>&lt;p&gt;原文地址：&lt;a href=&quot;http://martinfowler.com/articles/mocksArentStubs.html&quot;&gt;Mocks Aren&amp;#39;t Stubs&lt;/a&gt;（2007-01-02）&lt;/p&gt;
+
+&lt;p&gt;原文作者：&lt;a href=&quot;http://martinfowler.com/&quot;&gt;Martin Fowler&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;译者注：本文中讨论的两个重要概念mock和stub在下文中为了防止引起歧义，都直接使用而不翻译成中文。其中mock的英语中是模拟的意思；而stub是桩的意思。&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;目录：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;  &lt;a href=&quot;#regular-tests&quot;&gt;常规测试&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;  &lt;a href=&quot;#tests-with-mock-objects&quot;&gt;使用mock对象测试&lt;/a&gt; 
+
+&lt;ul&gt;
+&lt;li&gt;  &lt;a href=&quot;#using-easymock&quot;&gt;使用EasyMock&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;  &lt;a href=&quot;#the-difference-between-mocks-and-stubs&quot;&gt;mock和stub的区别&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;  &lt;a href=&quot;#classical-and-mockist-testing&quot;&gt;经典测试与mockist测试&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;  &lt;a href=&quot;#choosing-between-the-differences&quot;&gt;如何选择&lt;/a&gt; 
+
+&lt;ul&gt;
+&lt;li&gt;  &lt;a href=&quot;#driving-tdd&quot;&gt;使用测试驱动开发&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Mock对象（用于描述一个特例的对象，并在测试中模拟真实的对象）已经变成了一个流行的概念。现在许多语言都有一些用来构造mock对象的框架。然而，我们没有意识到，mock对象只是许多用于不同形式测试的测试对象中一种。在这篇文章中，我会解释mock对象是如何工作的、如何支持基于行为验证的测试的、以及社区中是如何用它来进行不同形式的测试。&lt;/p&gt;
+
+&lt;p&gt;几年前，我在XP（极限编程）社区中第一次听说mock对象这个概念。之后，我就越来越多地接触和使用mock对象，或许是因为许多这方面的顶尖开发者陆续地加入ThoughtWorks成为我的同事，或许是因为我接触到越来越多的受XP影响的测试。&lt;/p&gt;
+
+&lt;p&gt;但是，不仅仅我所看到的，mock对象被不恰当地描述。特别是我发现mock经常会和stub（一个常用的用于测试环境的帮助类）这个概念混淆。我能理解为什么，因为我也曾经有一段时间把他们当成类似的东西。在与mock开发者的交谈后，我茅塞顿开。&lt;/p&gt;
+
+&lt;p&gt;他们之间有两个不同点：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;  测试结果的验证方式的不同：一个是状态验证，另一个是行为验证；&lt;/li&gt;
+&lt;li&gt;  测试与设计哲学的完全不同：一个是传统型的，另一个是mockist（mock风格的）的&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;（在这篇文章的早期版本中，我把上述的两个区别结合成了一个。在那之后，我改进了我的理解，所以是时候更新下这篇日志了。如果你没有读过我之前的版本，那就忽略我的唠叨吧。我在写这篇文章时就当作未曾写过之前的版本。但是如果你熟悉之前的那个版本的话，就请注意一下我把之前的 &lt;strong&gt;基于状态的测试&lt;/strong&gt; 和 &lt;strong&gt;基于交互的测试&lt;/strong&gt; 修改为 &lt;strong&gt;状态/行为验证&lt;/strong&gt; 。同时我现在使用的词汇参照了Gerard Meszaros写的&lt;a href=&quot;http://xunitpatterns.com/&quot;&gt;xUnit模式&lt;/a&gt;那个本书。）&lt;/p&gt;
+
+&lt;h2&gt;&lt;a id=&quot;regular-tests&quot;&gt;&lt;/a&gt;常规测试&lt;/h2&gt;
+
+&lt;p&gt;我会通过一个简单的例子来描述这两种风格的测试。（例子是使用Java写的，但是这些原则是适用于任何面向对象编程语言的）在这个例子中，我们有一个仓库（warehouse）和从仓库中得到的一个订单（order）对象。订单很简单，包含产品（product）和数量（quantity）两个属性。仓库中保存了不同产品的存货清单。当我们向仓库获取订单的时候有两种可能的响应：如果仓库中产品量充足，则填写订单；如果不充足，那么订单将不会被填写，仓库也不会发生任何变动）。&lt;/p&gt;
+
+&lt;p&gt;上面的那两个行为对应一些测试，看上去是十分传统的JUnit测试。&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;public class OrderStateTester extends TestCase {
+  private static String TALISKER = &amp;quot;Talisker&amp;quot;;
+  private static String HIGHLAND_PARK = &amp;quot;Highland Park&amp;quot;;
+  private Warehouse warehouse = new WarehouseImpl();
+
+  protected void setUp() throws Exception {
+    warehouse.add(TALISKER, 50);
+    warehouse.add(HIGHLAND_PARK, 25);
+  }
+  public void testOrderIsFilledIfEnoughInWarehouse() {
+    Order order = new Order(TALISKER, 50);
+    order.fill(warehouse);
+    assertTrue(order.isFilled());
+    assertEquals(0, warehouse.getInventory(TALISKER));
+  }
+  public void testOrderDoesNotRemoveIfNotEnough() {
+    Order order = new Order(TALISKER, 51);
+    order.fill(warehouse);
+    assertFalse(order.isFilled());
+    assertEquals(50, warehouse.getInventory(TALISKER));
+  }
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;xUnit测试遵循了四个步骤：启动（setup）、执行（exercise）、验证（verify）、关闭（teardown）。在这个实例中，启动的步骤部分是在 &lt;code&gt;setUp&lt;/code&gt; 方法中完成的（构造仓库），还有一个部分是在测试方法中完成的（构造订单）。&lt;code&gt;order.fill&lt;/code&gt;调用是执行步骤，其中，对象以我们要求的测试方式执行。然后，断言（assert）语句是验证步骤，它检查了执行步骤中的方法是否正确地执行了那个任务。在这个实例中没有显式的关闭阶段，垃圾回收器（garbage collector）帮我们隐式地执行了这个步骤。&lt;/p&gt;
+
+&lt;p&gt;在启动阶段，有两种对象被放在一起使用。&lt;code&gt;Order&lt;/code&gt; 类是我们测试的类，但是为了让 &lt;code&gt;order.fill&lt;/code&gt; 能够工作，我们需要一个 &lt;code&gt;Warehouse&lt;/code&gt; 的实例。在这个情况下 &lt;code&gt;Order&lt;/code&gt; 是我们测试所关注的。 面向测试的人喜欢在这里使用 &lt;strong&gt;测试中的对象&lt;/strong&gt; （object-under-test）或者 &lt;strong&gt;测试中的系统&lt;/strong&gt; （system-under-test）这样的术语来命名它。无论使用其中的哪个术语都说起来十分拗口，但是它们都是被广泛接受的，所以我会勉为其难使用它们。我将参照Meszaros，使用 &lt;strong&gt;测试中的系统&lt;/strong&gt; 这个术语，或者它的缩写SUT。&lt;/p&gt;
+
+&lt;p&gt;所以，这个测试我们需要SUT（订单）和一个协作对象（仓库）。我需要仓库有以下两个原因：其一是为了让测试能够运行起来（因为 &lt;code&gt;Order.fill&lt;/code&gt; 调用了仓库的方法）；其次我需要它来做验证（由于 &lt;code&gt;Order.fill&lt;/code&gt; 返回的其中的一个结果可能造成仓库的状态发生变化）。当我们继续深究这个话题时，你会发现我们很大程度上区分了SUT和协作对象这两个概念。（在早期的这篇文章中，我把SUT写作 &lt;strong&gt;首要对象&lt;/strong&gt; （primary object），把协作对象写作 &lt;strong&gt;辅助对象&lt;/strong&gt; （secondary objects））&lt;/p&gt;
+
+&lt;p&gt;上述的这种测试的风格使用了 &lt;strong&gt;状态验证&lt;/strong&gt; ：我们通过在方法执行后SUT与其协作对象返回的状态来判断被执行的方法是否工作正常。接下来你会看到，mock对象会使用一种不同的方法来做验证。&lt;/p&gt;
+
+&lt;h2&gt;&lt;a id=&quot;tests-with-mock-objects&quot;&gt;&lt;/a&gt;使用mock对象测试&lt;/h2&gt;
+
+&lt;p&gt;现在我们使用mock对象来做相同的测试。下面的这段代码使用了&lt;a href=&quot;http://jmock.org/&quot;&gt;jMock&lt;/a&gt;类库来定义mock对象。jMock是一个Java的mock对象类库。当然也有其他的一些mock对象类库，但是这个类库比较新颖，并且是这个测试技术的发起人编写的，所以是个不错的选择。&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;public class OrderInteractionTester extends MockObjectTestCase {
+  private static String TALISKER = &amp;quot;Talisker&amp;quot;;
+
+  public void testFillingRemovesInventoryIfInStock() {
+    //setup - data
+    Order order = new Order(TALISKER, 50);
+    Mock warehouseMock = new Mock(Warehouse.class);
+
+    //setup - expectations
+    warehouseMock.expects(once()).method(&amp;quot;hasInventory&amp;quot;)
+      .with(eq(TALISKER),eq(50))
+      .will(returnValue(true));
+    warehouseMock.expects(once()).method(&amp;quot;remove&amp;quot;)
+      .with(eq(TALISKER), eq(50))
+      .after(&amp;quot;hasInventory&amp;quot;);
+
+    //exercise
+    order.fill((Warehouse) warehouseMock.proxy());
+
+    //verify
+    warehouseMock.verify();
+    assertTrue(order.isFilled());
+  }
+
+  public void testFillingDoesNotRemoveIfNotEnoughInStock() {
+    Order order = new Order(TALISKER, 51);    
+    Mock warehouse = mock(Warehouse.class);
+
+    warehouse.expects(once()).method(&amp;quot;hasInventory&amp;quot;)
+      .withAnyArguments()
+      .will(returnValue(false));
+
+    order.fill((Warehouse) warehouse.proxy());
+
+    assertFalse(order.isFilled());
+  }
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;先关注下 &lt;code&gt;testFillingRemovesInventoryIfInStock&lt;/code&gt; 这个方法，我之后会多次提到这个方法。&lt;/p&gt;
+
+&lt;p&gt;起先，启动阶段是十分不同的。一个启动包含了两个部分：数据与预期（expectation）。数据部分建立了我们关注的需要运行的对象，十分类似于传统的启动。区别在于对象是如何被创建的。SUT（订单）的创建并没有改变，然而协作对象并不是一个仓库对象，而是一个mock过的仓库（从技术上讲，是一个 &lt;code&gt;Mock&lt;/code&gt; 类的实例）。&lt;/p&gt;
+
+&lt;p&gt;启动的第二部分创建了mock对象的预期。这些预期指出了当执行SUT时，哪些方法应该在mock对象被调用时被执行。&lt;/p&gt;
+
+&lt;p&gt;当所有的预期就位后，我执行了SUT。在执行之后，我再做验证，其中包含两个方面：其一几乎和之前的那样，我对SUT做了断言；其二，我通过检查了预期中所描述的调用验证了mock。&lt;/p&gt;
+
+&lt;p&gt;这里，关键的不同点在于我们还验证了它与仓库的交互是否满足预期。之前，我们用断言仓库的状态来做状态验证。与之不同的是，mock使用了行为验证来检查订单是否正确地调用了仓库。在启动阶段，我们告诉了mock哪些是预期被执行的，并且要求mock在执行阶段验证自己是否正确。最后，我们只有对订单对象做了断言，如果这个方法并不改变状态，我们这里就根本不需要断言。&lt;/p&gt;
+
+&lt;p&gt;在第二个测试中，有许多不同之处。首先，我用不同的方式创建了mock，调用了 &lt;code&gt;MockObjectTestCase&lt;/code&gt; 的静态方法 &lt;code&gt;mock&lt;/code&gt;，而不是使用 &lt;code&gt;new Mock&lt;/code&gt; 这样的构造方法。这在jMock库中是一个十分方便的方法，我可以之后不用显式地调用 &lt;code&gt;verify&lt;/code&gt;，任何一个通过这种方法建立的mock都会在测试的最后自动地做一次验证。当然我可以在第一个测试也这样使用，但是我希望更显式地表现出验证过程，从而来表现mock是如何工作的。&lt;/p&gt;
+
+&lt;p&gt;第二个不同之处在于我使用了 &lt;code&gt;withAnyArguments&lt;/code&gt; 并没有限制预期的参数。这么写的理由是第一个测试中已经检查了传递到仓库的参数数目，因此第二个测试就不需要重复这个测试点了。如果订单的逻辑之后发生了改变，那么只会造成其中的一个测试不通过，这样使得测试的迁移变得较为简单。当然了，我甚至可以不写 &lt;code&gt;withAnyArguments&lt;/code&gt;，因为这是默认的。&lt;/p&gt;
+
+&lt;h3&gt;&lt;a id=&quot;using-easymock&quot;&gt;&lt;/a&gt;使用EasyMock&lt;/h3&gt;
+
+&lt;p&gt;mock对象的类库有很多。其中&lt;a href=&quot;http://easymock.org/&quot;&gt;EasyMock&lt;/a&gt;，我感觉还是不错的，它同时有Java和.NET的版本。EasyMock同样支持行为验证，但是相比jMock，在代码样式还是有些区别的，很值得讨论。下面又是我们熟悉的测试：&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;public class OrderEasyTester extends TestCase {
+  private static String TALISKER = &amp;quot;Talisker&amp;quot;;
+
+  private MockControl warehouseControl;
+  private Warehouse warehouseMock;
+
+  public void setUp() {
+    warehouseControl = MockControl.createControl(Warehouse.class);
+    warehouseMock = (Warehouse) warehouseControl.getMock();    
+  }
+
+  public void testFillingRemovesInventoryIfInStock() {
+    //setup - data
+    Order order = new Order(TALISKER, 50);
+
+    //setup - expectations
+    warehouseMock.hasInventory(TALISKER, 50);
+    warehouseControl.setReturnValue(true);
+    warehouseMock.remove(TALISKER, 50);
+    warehouseControl.replay();
+
+    //exercise
+    order.fill(warehouseMock);
+
+    //verify
+    warehouseControl.verify();
+    assertTrue(order.isFilled());
+  }
+
+  public void testFillingDoesNotRemoveIfNotEnoughInStock() {
+    Order order = new Order(TALISKER, 51);    
+
+    warehouseMock.hasInventory(TALISKER, 51);
+    warehouseControl.setReturnValue(false);
+    warehouseControl.replay();
+
+    order.fill((Warehouse) warehouseMock);
+
+    assertFalse(order.isFilled());
+    warehouseControl.verify();
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;EasyMock使用了 &lt;strong&gt;记录&lt;/strong&gt;（record） / &lt;strong&gt;重播&lt;/strong&gt; （replay）的方式来表示建立预期。对于每一个你想要mock的对象，你创建一个控制对象（control）和一个mock对象。mock对象满足了辅助对象（译者注：这里就是协作对象）的接口，控制对象提供了额外的特性。为了指出一个预期，你通过调用这个方法，并且传递你所预期的参数值。如果你想要一个返回值，可以在这之后紧跟一个控制对象的调用。一旦你完成了预期的设置，你调用控制对象的重播方法，此时mock对象就完成了记录，并且准备好返回结果给首要对象（译者注：这里就是上面所说的SUT）了。&lt;/p&gt;
+
+&lt;p&gt;貌似，尽管第一次看到这种记录/重播的形式会很折磨，但是却会很快地习惯了。相比jMock的约束，这里的优势在于你可以直接调用实际的方法而不是传递一个方法名称的字符串。这就意味着你可以用你的IDE帮你做代码补全（code-completion），还有你重构方法名的同时也会更新测试。但是反过来，你不能获得像jMock那样较为宽松的约束。&lt;/p&gt;
+
+&lt;p&gt;现在，jMock的开发者正在使用另一种技术来使你能够像EasyMock一样直接调用方法。&lt;/p&gt;
+
+&lt;h2&gt;&lt;a id=&quot;the-difference-between-mocks-and-stubs&quot;&gt;&lt;/a&gt;mock和stub的区别&lt;/h2&gt;
+
+&lt;p&gt;当我们同时引入这两个概念时，人们很容易把mock对象和普通测试概念中的stub混淆。当然通过上文的描述，貌似人们能更好地区分两者（我希望之前的版本也能够帮助你们区分）。然而为了完全理解使用mock的方式，理解mock以及其他形式的测试替身（&lt;a href=&quot;http://en.wikipedia.org/wiki/Test_double&quot;&gt;test doubles&lt;/a&gt;）是十分重要的。（“替身”？如果对你是一个新概念的话不用担心，在读完之后的几个段落后你就清楚了）&lt;/p&gt;
+
+&lt;p&gt;当你像上述的方法那样测试的话，你每次只关注软件中的一个元素（单元测试的基本概念）。问题是，为了让一个单元能够工作，你通常需要其他的单元，因此在我们的例子中需要一种仓库对象。&lt;/p&gt;
+
+&lt;p&gt;在上述的两种风格的测试中，第一个使用了真实仓库的对象，而第二个使用了mock过的仓库对象（当然它不是一个真实的仓库）。使用mock是一种在测试中不使用真实仓库的方式，但是还有其他各种形式的测试也同样可以是用非真实的对象。&lt;/p&gt;
+
+&lt;p&gt;接下里我们将提及的词汇会变得十分杂乱，什么stub、mock、fake（假对象）、dummy（傀儡对象）都用上了。在这篇文章中，我会是使用Gerard Meszaros书中所使用的词汇。这些词汇并不是所有人都这么使用的，但是我认为这样使用还不错，毕竟我得为我的文章挑选使用的词汇。&lt;/p&gt;
+
+&lt;p&gt;Meszaros使用了测试替身来指代那些在测试中用于替代真实对象的伪装对象。这个词取自电影中“特技替身演员”这个概念。（之所以这么取，目的是为了与现有广为使用的概念避免冲突）Meszaros还定义了四种特定的替身类型：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;  dummy对象虽然被传递进方法，但是它没有被真正地使用。通常它们只是被用来填充参数列表。&lt;/li&gt;
+&lt;li&gt;  fake对象实际上是有具体实现的，但是实现中做了些捷径，使它们不能应用与生产环境（举个好的例子：内存数据库）&lt;/li&gt;
+&lt;li&gt;  stub提供了测试期间预先设定的返回值，通常在测试中不对外部其他的调用做任何相应。stub同样也可以记录调用，例如一个邮件网关的stub会记录它“寄出去”的信息，或者可能只记录“寄出去”多少条。&lt;/li&gt;
+&lt;li&gt;  mock就是我们这边讨论的：对象中预先编写了特定场景下接收调用的预期。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;在上述替身中，只有mock是被用来做行为验证的。而其他的都通常被用来做状态验证的。实际上，mock对象在执行阶段和其他替身一样，都让SUT相信它所使用的是一个“真”的协作对象，但是mock对象在启动和验证阶段是不同的。&lt;/p&gt;
+
+&lt;p&gt;为了加深对于测试替身的理解，我们需要改造一下我们的例子。许多人只有当真实地对象很难掌控时才会使用一个替身。举个常见的例子，我们想要当填写订单失败后发送一个邮件。问题是，我们在测试时不想真正地给客户发送邮件。所以，我们为我们的邮件系统创建了一个可以控制调整的测试替身。&lt;/p&gt;
+
+&lt;p&gt;现在我们可以开始发现mock和stub的不同了。如果我们对于这个邮件行为要编写一个简单stub，那代码将会是这个样子。&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;public interface MailService {
+  public void send (Message msg);
+}
+public class MailServiceStub implements MailService {
+  private List&amp;lt;Message&amp;gt; messages = new ArrayList&amp;lt;Message&amp;gt;();
+  public void send (Message msg) {
+    messages.add(msg);
+  }
+  public int numberSent() {
+    return messages.size();
+  }
+}    
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;接着，我们可以对这个stub做这样的状态验证。&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;class OrderStateTester...
+  public void testOrderSendsMailIfUnfilled() {
+    Order order = new Order(TALISKER, 51);
+    MailServiceStub mailer = new MailServiceStub();
+    order.setMailer(mailer);
+    order.fill(warehouse);
+    assertEquals(1, mailer.numberSent());
+  }
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;当然，这是一个十分简单的测试，只发送了一条信息。我们根本没有测试信息的收件人、内容是否正确，但这只是是用来呈现观点的。&lt;/p&gt;
+
+&lt;p&gt;使用mock来测试会变得有点不同。&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text language-text&quot; data-lang=&quot;text&quot;&gt;class OrderInteractionTester...
+  public void testOrderSendsMailIfUnfilled() {
+    Order order = new Order(TALISKER, 51);
+    Mock warehouse = mock(Warehouse.class);
+    Mock mailer = mock(MailService.class);
+    order.setMailer((MailService) mailer.proxy());
+
+    mailer.expects(once()).method(&amp;quot;send&amp;quot;);
+    warehouse.expects(once()).method(&amp;quot;hasInventory&amp;quot;)
+      .withAnyArguments()
+      .will(returnValue(false));
+
+    order.fill((Warehouse) warehouse.proxy());
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;在这两个例子中，我都用到了测试替身，而不是使用真的邮件服务。区别在于，stub使用了状态验证而mock使用了行为验证。&lt;/p&gt;
+
+&lt;p&gt;为了能让stub做状态验证，我需要在stub上添加额外的方法来帮助验证（ &lt;code&gt;int numberSent()&lt;/code&gt; ）。所以，sub实现了&lt;code&gt;MailService&lt;/code&gt;接口的同时还添加了额外的测试方法。&lt;/p&gt;
+
+&lt;p&gt;mock对象总是使用行为验证，stub可以用其他方式来实现。Meszaros把这种使用行为测试的stub称之为测试间谍（Test Spy）。区别在于实际运行时这个测试替身是如何运作与验证的，读者们可以自行探究，我就不在这里展开了。&lt;/p&gt;
+
+&lt;h2&gt;&lt;a id=&quot;classical-and-mockist-testing&quot;&gt;&lt;/a&gt; 经典测试与mockist测试&lt;/h2&gt;
+
+&lt;p&gt;现在我们可以开始讨论第二个对于测试的分类了：经典&lt;a href=&quot;http://en.wikipedia.org/wiki/Test-driven_development&quot;&gt;测试驱动开发&lt;/a&gt;与mockist测试驱动开发。这里，最大的问题是什么时候应该用mock（或者其他测试替身）。&lt;/p&gt;
+
+&lt;p&gt;当使用经典的测试驱动开发时，我们会尽可能地使用真实的对象，除非真实的对象太难被直接使用。所以，一个经典测试驱动的开发者会使用一个真实的仓库对象，以及一个邮件服务的替身。至于使用哪一种替身并不重要。&lt;/p&gt;
+
+&lt;p&gt;然而，一个mockist的实践者对于那些具有“有趣”的行为的对象，总是使用mock。在相同的情况下，他会同时mock仓库以及邮件服务。&lt;/p&gt;
+
+&lt;p&gt;虽然各式的mock框架都是为mockist测试设计的，但是许多经典测试驱动开发者会发现，使用这些框架可以帮助他们构造测试替身。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://dannorth.net/introducing-bdd/&quot;&gt;行为驱动开发&lt;/a&gt;（BDD）是mockist风格的一个重要衍生。BDD最初是由我的同事Dan North开发的，用来更好地帮助人们学习测试驱动开发，并关注于把TDD作为一种设计技术。之所以把它重命名为“行为”，是为了更好地体现出TDD是如何帮助我们考虑一个对象所应该做的工作。BDD遵循mockist风格，但同时扩展了这种风格，扩展了命名的风格，以及要求在技术中集成分析。我不会再次继续深究这个概念，可以点击那个链接了解更多相关信息。&lt;/p&gt;
+
+&lt;h2&gt;&lt;a id=&quot;choosing-between-the-differences&quot;&gt;&lt;/a&gt; 如何选择&lt;/h2&gt;
+
+&lt;p&gt;在这篇文章中，我已经解释了一对区别：状态或是行为的验证 / 经典或是mockist的测试驱动开发。那我应该在它们中做出选择时注意什么呢？首先，我先来说说选择状态或是行为的验证。&lt;/p&gt;
+
+&lt;p&gt;第一个要考虑的是上下文。我们的对象间是不是只是一个简单协作？例如订单和仓库，或者是比较麻烦的，例如订单与邮件服务。&lt;/p&gt;
+
+&lt;p&gt;如果是一个简单的协作，那么选择也很简单。如果我是一个经典测试驱动开发者，那么我不会使用mock、stub或者其他形式的替身。我会使用真实的对象以及基于状态的验证。如果我是一个mockist的测试驱动开发者，我会使用mock以及基于行为的验证。根本就不需要做决定。&lt;/p&gt;
+
+&lt;p&gt;如果是一个麻烦的协作，那么如果我是个mockist测试驱动开发者，那么我就没有选择，我就使用mock对象以及基于行为的验证。如果我是经典测试驱动开发者，那么我需要做出选择，但是选择使用哪一个都不重要。通常，经典测试驱动开发者会根据具体的实例来决定使用在这个情况下最简单的方式。&lt;/p&gt;
+
+&lt;p&gt;所以就如我们所看到的，选择状态或是行为验证并不是一个重要的决定。真正重要的是到底使用经典的方式还是使用mock的方式。就如看到的那样，基于状态或是行为验证的特性影响了上述的选择，所以我接下来会重点讨论这个点。&lt;/p&gt;
+
+&lt;p&gt;但在我们开始之前，先让我抛出一个极端的情况。有时候有些东西是很难使用状态验证的，甚至它们就不是一个麻烦的协作。最好的例子就是缓存。你根本不能通过其状态来判断缓存是否命中。就算是经典测试驱动开发者也不得不承认，在这个情况下使用行为验证是一个明智的决定。相反，也存在行为测试无法胜任的情况。&lt;/p&gt;
+
+&lt;p&gt;当我们开始研究如何选择经典/mockist时，我们需要考虑许多因素，所以我把它们划分开来逐一讨论。&lt;/p&gt;
+
+&lt;h3&gt;&lt;a id=&quot;driving-tdd&quot;&gt;&lt;/a&gt; 使用测试驱动开发&lt;/h3&gt;
+
+&lt;p&gt;mock对象来自于XP社区。XP的主要特征之一就是重视测试驱动的开发。其中，系统的设计是通过编写测试随迭代演进的。&lt;/p&gt;
+
+&lt;p&gt;所以，这并不会令你惊讶，mockist特别喜欢讨论一个mockist风格测试在系统设计中的重要性。特别是，他们拥护一种叫做需求驱动（need-driven）开发的风格。在这个风格中，你通过在外部系统中编写测试、为SUT创建接口对象来开始开发一个用户故事（user story）。通过思考协作对象的预期调用，你发现了SUT与其相邻对象之间的交互——有效地设计SUT的外部接口。&lt;/p&gt;
+
+&lt;p&gt;一旦你运行了第一个测试，mock中的预期不仅为下一步开发提供了参考，还为下一步的测试提供了起点。你每次逐步测试上一个测试中预期的协作对象，不断重复这个过程。这个风格有一个很具描述性的名字，叫由外入内（outside-in）。在分层系统的测试中十分好用。你一开始使用下层的mock来编写UI层的代码。然后你逐步向下，为更下层编写测试。这是一个结构良好、便于控制的方法，并且许多人相信这个能够对于指导面向对象和测试驱动开发的初学者有所帮助。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;未完带续...&lt;/em&gt;&lt;/p&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>静态方法扼杀了可测性</title>
+        <link>/%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95%E6%89%BC%E6%9D%80%E4%BA%86%E5%8F%AF%E6%B5%8B%E6%80%A7</link>
+        <pubDate>Mon, 02 Dec 2013 00:00:00 +0800</pubDate>
+        <author>Aigars Dzerviniks</author>
+        <description>&lt;p&gt;原文地址：&lt;a href=&quot;http://googletesting.blogspot.com/2008/12/static-methods-are-death-to-testability.html&quot;&gt;Static Methods are Death to Testability&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;原文作者：&lt;a href=&quot;http://misko.hevery.com/about/&quot;&gt;Miško Hevery&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;最近，你们中很多人在读完&lt;a href=&quot;http://misko.hevery.com/code-reviewers-guide/&quot;&gt;可测性指南&lt;/a&gt;后，联系我说使用静态方法根本没有错。还有什么比&lt;code&gt;Math.abs()&lt;/code&gt;还要好测试的！而且&lt;code&gt;Math.abs()&lt;/code&gt;就是一个静态方法！如果，&lt;code&gt;abs()&lt;/code&gt;是一个实例方法，那你就要先构造出这个对象，然后再从中找出问题来。（请参考&lt;a href=&quot;http://misko.hevery.com/2008/07/08/how-to-think-about-the-new-operator/&quot;&gt;how to think about the new operator&lt;/a&gt;和&lt;a href=&quot;http://misko.hevery.com/code-reviewers-guide/flaw-constructor-does-real-work/&quot;&gt;class does real work&lt;/a&gt;）&lt;/p&gt;
+
+&lt;p&gt;最基本的问题在于静态方法是过程化的代码。我根本无法给过程化的代码写单元测试。单元测试假设了我能够从我的应用中实例化其中一块代码。在实例化的过程中，我把实际的依赖替换为模拟对象（mock）或是代码友好的对象。当使用过程化编程时，根本不存在“替换依赖”，因为就不存在对象的概念，代码与数据是分离的。&lt;/p&gt;
+
+&lt;p&gt;让我们换一种思路。单元测试需要有缝合（seams）。缝合就是用来防止按原有的方式执行代码，这样使得我们能隔离测试的类。缝合通过多态来实现，我们通过重写（override）或实现（implement）类或是接口，把这个测试类编织（wire）进测试中来控制测试的执行。如果你使用静态方法，就不存在重写。当然，静态方法调用确实方便，但是如果这个静态方法调用了其他的静态方法，你就无法重写那个被调用的依赖。&lt;/p&gt;
+
+&lt;p&gt;让我们举个极端的例子。假设你的应用全都是静态方法。（这当然可以写得出来，这样就变成了过程化编程）。现在想象下那个应用的调用关系图。如果你尝试执行叶节点（不依赖其他的方法）的方法，为这个方法设置状态、然后对于相应的用例做断言（assert）会毫无问题，因为叶节点的方法不会产生其他调用。当你从叶节点逐步靠近&lt;code&gt;main()&lt;/code&gt;方法的时候，你的单元测试已经不是单元测试了（你的单元是整个应用）。现在你做的是一个场景测试（scenario test）。想象下你测试的应用是一个文本处理器。你又能在主方法上断言些什么呢？&lt;/p&gt;
+
+&lt;p&gt;我们已经在之前的文章中知道全局的状态不好，以及它是如何让你的应用难以理解。如果你的应用不存在全局的状态，那么你静态方法的输入必须全部来自它的参数。幸运的是，你可以通过把它变成一个实例方法，把其中一个的参数作为这个实例方法的变量。（例如，把&lt;code&gt;method(a,b)&lt;/code&gt;变成&lt;code&gt;a.method(b)&lt;/code&gt;）。一旦你这么做了，你会发现这才是方法开始就应该使用的正确方式。那那些没有变量的静态方法呢？如果一个像&lt;code&gt;methodX()&lt;/code&gt;这样返回常量的方法就不需要测试；如果这个方法访问了全局的状态，那这个不是个好点子；或者它是一个工厂。&lt;/p&gt;
+
+&lt;p&gt;有时候，一个静态方法是其他一些对象的工厂（译者注，静态工厂方法可以参考stackoverflow上的&lt;a href=&quot;http://stackoverflow.com/questions/929021/what-are-static-factory-methods-in-java&quot;&gt;What are static factory methods in Java?&lt;/a&gt;）。这样使用更加加深了测试问题的出现。在测试中，我们依赖于编织对象，使用假对象来替代一些重要的依赖。然而如果使用了静态工厂方法，一旦出现了一个新的操作调用，我们不能使用一个子类来重写这个方法。静态工厂的一个调用将永久地与这个调用对应具体的类产生绑定关系。换句话说，静态方法产生的坏处远远大于其带来的便利。把对象关系图的编织（object graph wiring）和构造代码放入静态方法中是极其糟糕的，因为我们需要它来隔离测试相关的东西。&lt;/p&gt;
+
+&lt;p&gt;“那是不是可以这么说，叶节点的静态方法无所谓？”。我想进一步来简单地回答这个问题，使用静态方法都不是个好主意。当你的叶节点静态方法经过多次代码修改后，他们将不再是一个叶节点。把一个叶节点方法变成一个非叶节点的很容易，但是反过来却不那么简单了。所以使用叶节点静态方法也同样不可靠，会在以后成为问题。静态方法是过程式的！在面向对象语言中，请遵循面向对象的方法。我认为Java中&lt;code&gt;Math.abs(-5)&lt;/code&gt;这样的写法是错误的。我真的很想把它写成&lt;code&gt;-5.abs()&lt;/code&gt;。Ruby就是这么做的。&lt;/p&gt;
 </description>
       </item>
     

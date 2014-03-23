@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- meta information -->
+<meta charset="utf-8">
+<meta name="description" 
+      content="原文地址：[Static Methods are Death to Testability][1]原文作者：[Miško Hevery][2]最近，你们中很多人在读完[可测性指南][3]后，联系我说使用静态方法根本没有错。还有什么比`..." >
+<meta name="author" content="Aigars Dzerviniks">
+
+<!-- Enable responsiveness on mobile devices-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<!-- title -->
+<title>静态方法扼杀了可测性 &middot; Brume</title>
+
+<!-- icons -->
+<link rel="shortcut icon" href="/public/images/favicon.ico" />
+
+<!-- stylesheets -->
+<link rel="stylesheet" href="/public/css/responsive.gs.12col.css">
+<link rel="stylesheet" href="/public/css/animate.min.css">
+<link rel="stylesheet" href="/public/css/main.css">
+
+<!-- Google fonts -->
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,400italic&subset=latin-ext">
+
+
+
+<!-- feed links -->
+<link rel="alternate" href="/feed.xml" type="application/rss+xml" title="">
+
+  </head>
+  <body>
+    <div class="container azul">
+      <header class="top row gutters">
+        <div class="col span_2 center">
+          <!-- TODO: add baseurl to the logo link -->
+          <a href="" id="logo" title="Brume"
+             style="background-image: url(/public/images/logo.png);"></a>
+        </div>
+        <nav class="col span_10 top-navbar">
+  
+  <a href="/" title="Home"
+     >Home</a>
+  
+  <a href="/about" title="About"
+     >About</a>
+  
+</nav>
+
+      </header>
+
+      <article class="single row gutters">
+  <time class="published" datetime="2013-12-02">02 December 2013</time>
+  <h2>静态方法扼杀了可测性</h2>
+
+  <p>原文地址：<a href="http://googletesting.blogspot.com/2008/12/static-methods-are-death-to-testability.html">Static Methods are Death to Testability</a></p>
+
+<p>原文作者：<a href="http://misko.hevery.com/about/">Miško Hevery</a></p>
+
+<p>最近，你们中很多人在读完<a href="http://misko.hevery.com/code-reviewers-guide/">可测性指南</a>后，联系我说使用静态方法根本没有错。还有什么比<code>Math.abs()</code>还要好测试的！而且<code>Math.abs()</code>就是一个静态方法！如果，<code>abs()</code>是一个实例方法，那你就要先构造出这个对象，然后再从中找出问题来。（请参考<a href="http://misko.hevery.com/2008/07/08/how-to-think-about-the-new-operator/">how to think about the new operator</a>和<a href="http://misko.hevery.com/code-reviewers-guide/flaw-constructor-does-real-work/">class does real work</a>）</p>
+
+<p>最基本的问题在于静态方法是过程化的代码。我根本无法给过程化的代码写单元测试。单元测试假设了我能够从我的应用中实例化其中一块代码。在实例化的过程中，我把实际的依赖替换为模拟对象（mock）或是代码友好的对象。当使用过程化编程时，根本不存在“替换依赖”，因为就不存在对象的概念，代码与数据是分离的。</p>
+
+<p>让我们换一种思路。单元测试需要有缝合（seams）。缝合就是用来防止按原有的方式执行代码，这样使得我们能隔离测试的类。缝合通过多态来实现，我们通过重写（override）或实现（implement）类或是接口，把这个测试类编织（wire）进测试中来控制测试的执行。如果你使用静态方法，就不存在重写。当然，静态方法调用确实方便，但是如果这个静态方法调用了其他的静态方法，你就无法重写那个被调用的依赖。</p>
+
+<p>让我们举个极端的例子。假设你的应用全都是静态方法。（这当然可以写得出来，这样就变成了过程化编程）。现在想象下那个应用的调用关系图。如果你尝试执行叶节点（不依赖其他的方法）的方法，为这个方法设置状态、然后对于相应的用例做断言（assert）会毫无问题，因为叶节点的方法不会产生其他调用。当你从叶节点逐步靠近<code>main()</code>方法的时候，你的单元测试已经不是单元测试了（你的单元是整个应用）。现在你做的是一个场景测试（scenario test）。想象下你测试的应用是一个文本处理器。你又能在主方法上断言些什么呢？</p>
+
+<p>我们已经在之前的文章中知道全局的状态不好，以及它是如何让你的应用难以理解。如果你的应用不存在全局的状态，那么你静态方法的输入必须全部来自它的参数。幸运的是，你可以通过把它变成一个实例方法，把其中一个的参数作为这个实例方法的变量。（例如，把<code>method(a,b)</code>变成<code>a.method(b)</code>）。一旦你这么做了，你会发现这才是方法开始就应该使用的正确方式。那那些没有变量的静态方法呢？如果一个像<code>methodX()</code>这样返回常量的方法就不需要测试；如果这个方法访问了全局的状态，那这个不是个好点子；或者它是一个工厂。</p>
+
+<p>有时候，一个静态方法是其他一些对象的工厂（译者注，静态工厂方法可以参考stackoverflow上的<a href="http://stackoverflow.com/questions/929021/what-are-static-factory-methods-in-java">What are static factory methods in Java?</a>）。这样使用更加加深了测试问题的出现。在测试中，我们依赖于编织对象，使用假对象来替代一些重要的依赖。然而如果使用了静态工厂方法，一旦出现了一个新的操作调用，我们不能使用一个子类来重写这个方法。静态工厂的一个调用将永久地与这个调用对应具体的类产生绑定关系。换句话说，静态方法产生的坏处远远大于其带来的便利。把对象关系图的编织（object graph wiring）和构造代码放入静态方法中是极其糟糕的，因为我们需要它来隔离测试相关的东西。</p>
+
+<p>“那是不是可以这么说，叶节点的静态方法无所谓？”。我想进一步来简单地回答这个问题，使用静态方法都不是个好主意。当你的叶节点静态方法经过多次代码修改后，他们将不再是一个叶节点。把一个叶节点方法变成一个非叶节点的很容易，但是反过来却不那么简单了。所以使用叶节点静态方法也同样不可靠，会在以后成为问题。静态方法是过程式的！在面向对象语言中，请遵循面向对象的方法。我认为Java中<code>Math.abs(-5)</code>这样的写法是错误的。我真的很想把它写成<code>-5.abs()</code>。Ruby就是这么做的。</p>
+
+</article>
+
+
+      <footer>
+        <p>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/deed.en_US">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
+        </p>
+      </footer>
+    </div>
+
+    <!-- scripts -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/public/js/jquery.fitvids.js"></script>
+    <script>
+      $(document).ready(function(){
+        $("article").fitVids();
+      });
+    </script>
+  </body>
+</html>

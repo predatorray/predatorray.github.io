@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- meta information -->
+<meta charset="utf-8">
+<meta name="description" 
+      content="[Dokku][1]是一个小型的PAAS平台，支持Ruby、Node.js、Java、Play!、Python、PHP、Clojure、Go、Dart。其实就是一个小型的[Heroku][2]云平台。可以使用简易的方式部署小型应用（只..." >
+<meta name="author" content="Aigars Dzerviniks">
+
+<!-- Enable responsiveness on mobile devices-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<!-- title -->
+<title>在Ubuntu上运行Dokku &middot; Brume</title>
+
+<!-- icons -->
+<link rel="shortcut icon" href="/public/images/favicon.ico" />
+
+<!-- stylesheets -->
+<link rel="stylesheet" href="/public/css/responsive.gs.12col.css">
+<link rel="stylesheet" href="/public/css/animate.min.css">
+<link rel="stylesheet" href="/public/css/main.css">
+
+<!-- Google fonts -->
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,400italic&subset=latin-ext">
+
+
+
+<!-- feed links -->
+<link rel="alternate" href="/feed.xml" type="application/rss+xml" title="">
+
+  </head>
+  <body>
+    <div class="container azul">
+      <header class="top row gutters">
+        <div class="col span_2 center">
+          <!-- TODO: add baseurl to the logo link -->
+          <a href="" id="logo" title="Brume"
+             style="background-image: url(/public/images/logo.png);"></a>
+        </div>
+        <nav class="col span_10 top-navbar">
+  
+  <a href="/" title="Home"
+     >Home</a>
+  
+  <a href="/about" title="About"
+     >About</a>
+  
+</nav>
+
+      </header>
+
+      <article class="single row gutters">
+  <time class="published" datetime="2014-01-28">28 January 2014</time>
+  <h2>在Ubuntu上运行Dokku</h2>
+
+  <p><a href="https://github.com/progrium/dokku">Dokku</a>是一个小型的PAAS平台，支持Ruby、Node.js、Java、Play!、Python、PHP、Clojure、Go、Dart。其实就是一个小型的<a href="https://www.heroku.com/">Heroku</a>云平台。可以使用简易的方式部署小型应用（只需用<code>git</code>将代码<code>push</code>到对应的仓库就自动触发部署）。下面来介绍一下如何在Ubuntu上安装及配置Dokku的。</p>
+
+<p>下述的安装方式是基于Ubuntu 12.04.3 x32版本的，对于更高版本的Ubuntu系统，其安装方式基本是类似的。安装的过程十分简单，许多过程是依靠提供的脚本自动完成的，你只需要了解一些基本的Linux操作知识就足够了。</p>
+
+<h2>安装</h2>
+
+<p>首先使用<code>root</code>账户登录你的Ubuntu服务器。（在本机上测试的话，只需要<code>su</code>切换一下用户就好了）</p>
+
+<p>安装必需的软件包（通常，只有在Ubuntu 12.04版本需要执行下面的步骤，对于更高的版本可以跳过）</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">apt-get install -y python-software-properties
+</code></pre></div>
+<p>执行下面的脚本，自动完成整个Dokku的下载与安装</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">wget -qO- https://raw.github.com/progrium/dokku/v0.2.1/bootstrap.sh | sudo DOKKU_TAG=v0.2.1 bash
+</code></pre></div>
+<p>这个过程大约需要5分钟时间。</p>
+
+<h2>配置</h2>
+
+<p>等待其自动安装完毕之后，就可以开始配置Dokku了。通常有如下两种Dokku应用的发布方式：</p>
+
+<ol>
+<li> 将Dokku发布在某个特定的域名的子域名下。应用将发布在类似<code>http://&lt;应用名称&gt;.&lt;域名&gt;:80</code>的url上面。</li>
+<li> 将Dokku发布在一个自动分配的端口上面。应用则会以<code>http://&lt;域名&gt;:&lt;自动分配的端口&gt;</code>形式访问，然后可以通过配置nginx把某个特定的路径来转发到这个应用上。</li>
+</ol>
+
+<p>对于第一种方式，需要当前的服务器已配置主机名。通过修改<code>/home/dokku/VHOST</code>来指定自己应用的根域名。并且还需要这个根域名的DNS记录，比较麻烦也不常用，因此接下来主要讲一下第二种。</p>
+
+<p>在安装结束后，进入<code>/home/dokku</code>目录，</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">cd /home/dokku
+</code></pre></div>
+<p>如果已存在<code>/home/dokku/VHOST</code>文件，则暂时删除它（这里我们使用重命名的方式），</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">mv /home/dokku/VHOST /home/dokku/VHOST~
+</code></pre></div>
+<p>然后，为了方便在部署完应用后定位应用实际的url，我们需要在<code>/home/dokku/HOSTNAME</code>设置自己的主机名或是域名，</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">echo &quot;&lt;你的主机名，如localhost、example.com&gt;&quot; &gt; /home/dokku/HOSTNAME
+</code></pre></div>
+<p>由于dokku使用的<code>git</code>来完成应用的部署，我们需要将我们的公钥上传到dokku上，使dokku能验证我们的身份。</p>
+
+<p>如果你还没有生成自己的公钥和私钥的话，在你的本机上（不是服务器）运行如下命令，来生成。</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">ssh-keygen -t rsa
+</code></pre></div>
+<p>生成一对公钥和私钥后，我们需要把公钥上传到服务器上，在你的本机上运行如下命令，（这里我们假设你使用默认的配置，把密钥都生成在<code>~/.ssh目录下，并且名称为id_rsa</code>）</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">cat ~/.ssh/id_rsa.pub | ssh root@&lt;你的服务器&gt; &quot;sudo sshcommand acl-add dokku progrium&quot;
+</code></pre></div>
+<p>这样，你就完成了配置，可以开始部署你的应用了。</p>
+
+<h2>部署</h2>
+
+<p>接下来，我示范一下如何部署一个由Heroku提供的node.js的示例应用。</p>
+
+<p>首先在本机上使用git克隆这个项目，</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">git clone https://github.com/heroku/node-js-sample -o sample
+</code></pre></div>
+<p>接着添加我们刚配置好的dokku应用地址，</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">cd node-js-sample
+git remote add dokku dokku@&lt;你的dokku服务器，例如example.com&gt;:&lt;应用名称，例如node-js-app&gt;
+</code></pre></div>
+<p>把示例应用推送到服务器上，</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">git push dokku master
+</code></pre></div>
+<p>在<code>push</code>的时候，dokku自动触发了部署脚本，在一小段时间的等待后，会有如下的输出，</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">-----&gt; Building runtime environment
+-----&gt; Discovering process types
+       Procfile declares types -&gt; web
+-----&gt; Releasing node-js-app ...
+-----&gt; Deploying node-js-app ...
+-----&gt; Cleaning up ...
+=====&gt; Application deployed:
+       http://&lt;你的dokku服务器&gt;:&lt;端口&gt;
+</code></pre></div>
+<p>访问上述输出最后一段的url就能看到<code>Hello World!</code>了。接下来，你可以通过配置nginx，把80端口转发到这个端口上来。</p>
+
+<p>如果想直接使用而不想自己配置的话，可以试一下<a href="https://www.digitalocean.com/?refcode=94565696c539">DigitalOcean</a>自动配置的Dokku应用。当然你也可以使用他们提供的云主机，从零开始配置，下面是DigitalOcean的链接。</p>
+
+<p><a href="https://www.digitalocean.com/?refcode=94565696c539"><img src="http://www.predatorray.me/wp-content/uploads/2014/01/ssd-virtual-servers-banner-2-728x90.jpg" alt=""></a></p>
+
+</article>
+
+
+      <footer>
+        <p>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/deed.en_US">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
+        </p>
+      </footer>
+    </div>
+
+    <!-- scripts -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/public/js/jquery.fitvids.js"></script>
+    <script>
+      $(document).ready(function(){
+        $("article").fitVids();
+      });
+    </script>
+  </body>
+</html>
