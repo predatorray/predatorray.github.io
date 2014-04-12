@@ -10,7 +10,7 @@ title: 使用ssh隧道绕过公司防火墙
 
 **重要提示：本文并不是鼓励你通过非法手段绕过任何管理员所设置的网络限制。我们所展现的技术是用来帮助那些工作环境在需要在防火墙之后的。如果你打算使用本文中所述的一些伎俩来突破你公司的防火墙，你必须了解，你的行为可能不被你的公司所允许，你将可能被解雇。我们不会对你的行为负责。你已被警告。**
 
-这篇文章是前一篇在门户发表的[SSH tricks][2]的续文。然而这篇文章的和前者有所不同，这篇文章是写给经验更丰富的用户，特别是那些必须在严酷网络环境下工作的人。换言之，我们使用SSH为FTP或者CVS之类的不安全协议创建隧道并不会在本文中被论述。可能会有其他的关于SSH的文章会覆盖这些。
+这篇文章是前一篇在门户发表的[SSH tricks][2]的续文。然而这篇文章的和前者有所不同，这篇文章是写给经验更丰富的用户，特别是那些必须在严酷网络环境下工作的人。换言之，我们使用SSH为FTP或者CVS之类的不安全协议创建安全隧道（如git、sftp）并不会在本文中被论述。可能会有其他的关于SSH的文章会覆盖这些。
 
 ## 准备工作
 
@@ -39,14 +39,12 @@ title: 使用ssh隧道绕过公司防火墙
     -L 10025:EXT_SMTP_SVR:25 -L 10110:EXT_POP_SVR:110
     
 
-让我来解释一下。`-L`选项可以理解为“监听本地端口”。在空格之后，我们添加了SSH要监听的端口（在我们的例子中，我们使用了10025和10110，但是这仅仅是例子；你可以选择不同的端口，但是如果端口号小于1024的话就需要`root`权限了）。在第一个冒号后面，我们注明了`REMOTE_HOST`转发的链接。在第二个冒号后面，我们声明了最终服务器/计算机需要等待我们链接的端口。需要强调的是，在第一个冒号之后，我们给出的是一个和`REMOTE_HOST`相关的地址。如何你想要通过隧道链接`REMOTE_HOST`的22端口，你应该使用如下命令：
+让我来解释一下。`-L`选项可以理解为“监听本地端口”。在空格之后，我们添加了SSH要监听的端口（在我们的例子中，我们使用了10025和10110，但是这仅仅是例子；你可以选择不同的端口，但是如果端口号小于1024的话就需要`root`权限了）。在第一个冒号后面，我们注明了`REMOTE_HOST`转发的链接。在第二个冒号后面，我们声明了最终服务器/计算机需要等待我们链接的端口。需要强调的是，在第一个冒号之后，我们给出的是一个和`REMOTE_HOST`相关的地址。如果你想要通过隧道链接`REMOTE_HOST`的22端口，你应该使用如下命令：
 
     worker@LOCAL_HOST:~$ ssh user@IP_NUMBER -L 10025:localhost:25
     
 
 让我们回到刚才的隧道。我们现在可以配置一个连接外部服务器的邮件客户端。就如我之前提到的那样，我们监听10025端口的`LOCAL_HOST`如今变成了监听23端口的`EXT_SMTP_SVR`服务器。以此类推，我们可以这么说，`localhost:10110`就是`EXT_POP_SVR:110`。现在我们应该把我们邮件客户端的接收端配置为localhost下的10110端口（SSH会在`REMOTE_HOST`端为我们继续完成通信）。通常，配置成`LOCAL_HOST`的本地主机应当指向自己。于是，客户端的发送端应配置为localhost下的10025端口。
-
-Note that you don’t have to use your IP_NUMBER all the time. If you want to use REMOTE_HOST by its name you need to put a line like this
 
 这个十分简单的方式（至少我是这么觉得的）只能绕过不是很复杂的网络限制。但是你的网络管理员不会坐视不管。
 
@@ -57,16 +55,32 @@ Note that you don’t have to use your IP_NUMBER all the time. If you want to us
 
 你的机器会迅速帮你把`REMOTE_HOST`解析到`IP_NUMBER`上。只有当`REMOTE_HOST`是一个域名（或者你真的希望一直使用`IP_NUMBER`）时，你才不需要做上面那步。尽管如此，本文还是使用`IP_NUMBER`。
 
-## 让我们开始更高级的吧
+## 让我们使用更高级的功能吧
 
 现在我们的状况又发生了改变。办公室中的某人滥用了WWW，然后老板限制了HTTP的访问。当然，这里我们不会关注限制是如何实现的。但是22端口还是开放的，然而80端口（用于HTTP通讯的）却被关闭了。如果我们会使用隧道的话，这不会是个大问题。
-
-It seems impossible but even the Google search has been blocked. So, to solve this unfortunate situation, we sit down and log onto our REMOTE_HOST like that:
 
 这看起来似乎不可能了，甚至Google搜索也被屏蔽了。所以，为了解决这个不幸的状况，我们会继续登录我们的`REMOTE_HOST`：
 
     worker@LOCAL_HOST:~$ ssh user@IP_NUMBER \\
     -L 10080:www.google.com:80
+
+然后在Firefox上依次点击：编辑 -> 偏好 -> 连接设置 -> 手动代理配置。然后我们在这个设置页面中分别填入服务器为`localhost`，端口为`10080`。如果还有其他相同的设置项，都如上填好。我们会在下面用到这个。我们把这些额外的设置取名为`PROXY_SVR`以及`PROXY_PORT`。
+
+现在我们可以在地址栏里输入`http://www.google.com`，然后就惊奇地发现WWW又能够使用了！但是不要高兴得太早，如果访问`http://www.altavista.com.`你就会发现还是打开了Google搜索。所有的流量全部通过SSH指向了`www.google.com`。如果我们要访问*AltaVista*，那我们就需要重新连接：
+
+    worker@LOCAL_HOST:~$ ssh user@IP_NUMBER \\
+    -L 10080:www.altavista.com:80
+
+这绝不是一个行之有效的办法。
+
+## SSH代理
+
+在这个情况下，让我们看一下SSH手册中的`-D`参数。就如手册上说的，SSH可以当做一个（特别的）代理服务器使用。它是一个SOCKS型（模拟）的代理服务器。我们不用去关心它使如何实现的，我们只需了解这个名字。在终端中输入如下命令：
+
+    worker@LOCAL_HOST:~$ ssh user@IP_NUMBER -D 8080
+
+这样，SSH就会监听8080端口。让我们返回到之前Firefox的代理设置中，找到SOCKS主机的设置项。在那个设置项中填入`localhost`和`8080`（服务类型选择5）。不要忘记去除之前的HTTP代理设置。然后猜猜发生了什么？现在，SSH能够解析并代理每一个发送到这个端口的数据，并动态的开启隧道（在`REMOTE_HOST`上）指向在Firefox地址栏中得目标主机。从此之后，我们就能访问整个互联网了！
+
 
  [1]: http://polishlinux.org/apps/ssh-tunneling-to-bypass-corporate-firewalls/
  [2]: http://polishlinux.org/apps/ssh-tricks/
