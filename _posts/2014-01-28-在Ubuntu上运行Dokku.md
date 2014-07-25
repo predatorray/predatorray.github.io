@@ -102,4 +102,4 @@ title: 在Ubuntu上运行Dokku
  [1]: https://github.com/progrium/dokku
  [2]: https://www.heroku.com/
  [3]: https://www.digitalocean.com/?refcode=94565696c539
- [4]: http://www.predatorray.me/wp-content/uploads/2014/01/ssd-virtual-servers-banner-2-728x90.jpg
+ [4]: /public/images/ssd-virtual-servers-banner-2-728x90.jpg
