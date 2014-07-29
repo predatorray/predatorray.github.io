@@ -850,12 +850,15 @@ footer small {
   font-size: 12px;
   text-align: center;
   display: block;
-  width: 100%;
+  width: 100%;/*
   position: absolute;
-  bottom: 8px;
+  bottom: 8px; */
   font-family: "Source Sans Pro", "Open Sans", "Helvetica Neue", "Arial", sans-serif;
   text-transform: uppercase;
   color: rgba(249, 249, 249, 0.1);
+}
+footer small.links {
+    margin-bottom: 20px;
 }
 footer small a {
   color: rgba(249, 249, 249, 0.3);
