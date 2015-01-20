@@ -1126,6 +1126,6 @@ pre {
   border: 1px solid #aaa;
 }
 
-pre code {
-  margin: 10px 8px;
+pre.prettyprint {
+  padding: 10px 10px;
 }
