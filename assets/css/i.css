@@ -1114,3 +1114,18 @@ footer .social ul li:last-child {
     font-size: 12px;
   }
 }
+
+/* ==========================================================================
+   Customized
+   ========================================================================== */
+pre {
+  margin-top: 25px;
+  margin-bottom: 25px;
+  background-color: rgb(240, 240, 240);
+  border-radius: 4px;
+  border: 1px solid #aaa;
+}
+
+pre code {
+  margin: 10px 8px;
+}
