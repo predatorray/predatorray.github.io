@@ -1124,6 +1124,7 @@ pre {
   background-color: rgb(240, 240, 240);
   border-radius: 4px;
   border: 1px solid #aaa;
+  overflow-x: scroll;
 }
 
 pre.prettyprint {
