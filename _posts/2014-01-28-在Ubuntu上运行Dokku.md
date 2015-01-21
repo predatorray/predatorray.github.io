@@ -103,4 +103,4 @@ comments: true
  [1]: https://github.com/progrium/dokku
  [2]: https://www.heroku.com/
  [3]: https://www.digitalocean.com/?refcode=94565696c539
- [4]: /public/images/ssd-virtual-servers-banner-2-728x90.jpg
+ [4]: /images/ssd-virtual-servers-banner-2-728x90.jpg
