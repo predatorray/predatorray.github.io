@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 使用update-alternatives配置jdk
+title: 使用update-alternatives配置jdk（翻译）
 comments: true
 ---
 
