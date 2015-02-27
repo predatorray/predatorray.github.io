@@ -363,6 +363,7 @@ pre {
   border: 1px solid #aaa;
   overflow-x: auto;
   padding: 10px 10px;
+  line-height: 1em;
 }
 
 code {
