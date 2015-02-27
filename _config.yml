@@ -11,4 +11,4 @@ markdown: kramdown
 highlighter: pygments
 baseurl: # the subpath of your site, e.g. /blog/
 
-permalink:   /:categories/:title
+permalink:   /:categories/:title/
