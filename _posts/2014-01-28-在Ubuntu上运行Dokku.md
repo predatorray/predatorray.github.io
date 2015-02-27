@@ -2,6 +2,7 @@
 layout: post
 title: 在Ubuntu上运行Dokku
 comments: true
+keywords: dokku,ubuntu
 ---
 
 [Dokku][1]是一个小型的PAAS平台，支持Ruby、Node.js、Java、Play!、Python、PHP、Clojure、Go、Dart。其实就是一个小型的[Heroku][2]云平台。可以使用简易的方式部署小型应用（只需用`git`将代码`push`到对应的仓库就自动触发部署）。下面来介绍一下如何在Ubuntu上安装及配置Dokku的。

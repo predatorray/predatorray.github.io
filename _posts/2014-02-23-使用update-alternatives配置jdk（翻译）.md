@@ -2,6 +2,7 @@
 layout: post
 title: 使用update-alternatives配置jdk（翻译）
 comments: true
+keywords: update-alternatives,java,jdk
 ---
 
 原文地址：[How to setup up a new JDK with update-alternatives?][1]
