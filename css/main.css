@@ -88,7 +88,7 @@ article {
 
 header {
   position: relative;
-  width: 20%;
+  width: 35%;
   background-repeat: no-repeat;
   background-position: center;
   -webkit-background-size: cover;
@@ -289,7 +289,7 @@ header ul.meta li span {
 /* Article */
 
 article {
-  width: 80%;
+  width: 65%;
   overflow-x: hidden;
 }
 
