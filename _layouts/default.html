@@ -23,6 +23,9 @@
   <link rel="stylesheet" href="{{ site.baseurl }}/css/google-fonts.css" type="text/css">
 
   {% if site.plus %}<link rel="author" href="{{ site.plus }}">{% endif %}
+  {% if page.alternates %} {% for alternate in page.alternates %}
+  <link rel="alternate" type="{{ alternate.type }}" title="{{ alternate.title }}" href="{{ alternate.href }}">
+  {% endfor %} {% endif %}
 </head>
 <body>
   {{ content }}
