@@ -10,17 +10,17 @@
   {% if page.description %}<meta name="description" content="{{ page.description }}">{% endif %}
   {% if site.author %}<meta name="author" content="{{ site.author }}">{% endif %}
 
-  <!-- syntax highlighting CSS -->
-  <link rel="stylesheet" href="{{ site.baseurl }}/css/syntax.css" type="text/css">
-
   <!-- CSS -->
   <link rel="stylesheet" href="{{ site.baseurl }}/css/reset.css" type="text/css">
   <link rel="stylesheet" href="{{ site.baseurl }}/css/main.css" type="text/css">
-  <link rel="stylesheet" href="{{ site.baseurl }}/css/prettify.css" type="text/css">
+  <link rel="stylesheet" href="http://apps.bdimg.com/libs/prettify/r298/prettify.min.css" type="text/css">
 
-  <!-- Fonts -->
-  <link rel="stylesheet" href="{{ site.baseurl }}/css/font-awesome.css" type="text/css">
-  <link rel="stylesheet" href="{{ site.baseurl }}/css/google-fonts.css" type="text/css">
+  <!-- Fonts --> 
+  <!-- <link rel="stylesheet" href="{{ site.baseurl }}/css/font-awesome.css" type="text/css"> -->
+  <link rel="stylesheet" href="http://fonts.useso.com/css?family=Bitter:400,700,400italic|Open+Sans:400italic,600italic,400,600" type="text/css">
+
+  <!-- syntax highlighting CSS -->
+  <link rel="stylesheet" href="{{ site.baseurl }}/css/syntax.css" type="text/css">
 
   {% if site.plus %}<link rel="author" href="{{ site.plus }}">{% endif %}
   {% if page.alternates %} {% for alternate in page.alternates %}
@@ -29,8 +29,8 @@
 </head>
 <body>
   {{ content }}
-  <script src="{{ site.url }}/js/jquery.min.js"></script>
-  <script src="{{ site.url }}/js/prettify.js"></script>
+  <script src="http://apps.bdimg.com/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="http://apps.bdimg.com/libs/prettify/r298/prettify.min.js"></script>
   <script type="text/javascript">
     $(document).ready(function(e) {
       $("pre").addClass("prettyprint");
