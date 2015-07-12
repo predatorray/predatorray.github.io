@@ -1,50 +1,34 @@
 ---
 layout: default
 ---
-<header class="cover">
-  <div class="container post-container">
-    <a href="{{ site.baseurl }}/" class="home_button"></a>
-    <div class="inner-container">
+  <article>
+    <div class="title">
       <h1>{{ page.title }}</h1>
-      <ul class="meta">
-        <li>
-          <span>
-            发布于
-          </span>
-          {{ page.date | date_to_string }}
-        </li>
-        <li>
-          {% if page.categories and page.categories.size > 0 %}
-          <span>
-            分类
-          </span>
-          {{ page.categories }}
-          {% endif %}
-        </li>
-      </ul>
+      <div class="meta">
+        发布于 {{ page.date | date_to_string }}
+      </div>
+      <div class="meta">
+        {% if page.categories and page.categories.size > 0 %}
+        分类 {{ page.categories }}
+        {% endif %}
+      </div>
     </div>
-    <ul class="pagination">
+
+    {{ content }}
+
+    <p class="pagination">
       {% if page.previous.url %}
-        <li class="previous">
-          <a href="{{ site.baseurl }}{{ page.previous.url }}">
-            上一页
-          </a>
-        </li>
+      <a class="prev" href="{{ site.baseurl }}{{ page.previous.url }}">
+        上一篇：{{ page.previous.title }}
+      </a>
       {% endif %}
       {% if page.next.url %}
-      <li class="next">
-        <a href="{{ site.baseurl }}{{ page.next.url }}">
-          下一页
-        </a>
-      </li>
+      <a class="next" href="{{ site.baseurl }}{{ page.next.url }}">
+        下一篇：{{ page.next.title }}
+      </a>
       {% endif %}
-    </ul>
-  </div>
-</header>
-
-<article>
-  <div class="container">
-    {{ content }}
+    </p>
+    
     <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a></div>
 <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
     {% if page.comments %}
@@ -62,5 +46,4 @@ layout: default
     </script>
     <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
     {% endif %}
-  </div>
-</article>
+  </article>
