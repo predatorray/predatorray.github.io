@@ -22,6 +22,10 @@ a {
     text-decoration: none;
 }
 
+a:hover {
+    text-decoration: underline;
+}
+
 ol, ul {
     list-style: none;
 }
@@ -37,6 +41,39 @@ header h1 {
 header h1 a {
     color: inherit;
     text-decoration: none;
+}
+
+footer .logo {
+    height: 50px;
+    float: right;
+    margin: 20px;
+}
+
+pre {
+    padding: 2px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    border: 1px solid #888;
+    background-color: rgb(240, 240, 240);
+    border-radius: 4px;
+    overflow-x: auto;
+    line-height: 1em;
+}
+
+code {
+    font-family: Monaco, Consolas, "Andale Mono", "DejaVu Sans Mono", monospace;
+}
+
+pre code {
+    display: block;
+    padding: 0.5em 1em;
+    
+    font-size: 95%;
+    line-height: 140%;
+    white-space: pre;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -o-pre-wrap;
 }
 
 .container {
@@ -66,8 +103,13 @@ article h1 {
 
 .meta {
     display: block;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     color: #8d8d8d;
+}
+
+h2 .meta {
+    float: right;
+    font-size: 15px;
 }
 
 .pagination .prev {

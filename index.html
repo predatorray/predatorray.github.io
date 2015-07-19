@@ -8,10 +8,10 @@ alternates:
 <ul class="posts">
   {% for post in site.posts %}
     <li>
-      <h2><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></h2>
-      <span class="meta">
-        {{ post.date | date_to_string }}
-      </span>
+      <h2>
+        <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
+        <span class="meta">{{ post.date | date: "%Y年%m月%d日" }}</span>
+      </h2>
       {{ post.excerpt }}
     </li>
   {% endfor %}
