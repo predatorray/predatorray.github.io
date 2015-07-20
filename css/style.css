@@ -1,9 +1,5 @@
-h1, h2 {
-    font-family: 'Open Sans', sans-serif;
-}
-
-h3 {
-    margin-top: 30px;
+h1, h2, h3, h4, h5, h6, p, article {
+    font-family: "Microsoft YaHei", "黑体", "宋体", sans-serif, "Open Sans";
 }
 
 h2 {
@@ -11,6 +7,10 @@ h2 {
     font-size: 24px;
     margin-bottom: 18px;
     margin-top: 36px;
+}
+
+h3 {
+    margin-top: 30px;
 }
 
 p {
@@ -80,16 +80,26 @@ pre code {
     padding: 20px 80px;
 }
 
-ul.posts {
+.posts {
     padding-left: 0px;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
-ul.posts li {
+.posts li {
     border-bottom: 1px solid #eeeeee;
 }
 
 .posts p {
     margin-bottom: 36px;
+}
+
+article {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 30px 20px;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 article .title {
@@ -99,17 +109,25 @@ article .title {
 article h1 {
     color: #CE2323;
     font-size: 36px;
+    margin-bottom: 10px;
+}
+
+article h2 {
+    padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
 }
 
 .meta {
     display: block;
     margin-bottom: 14px;
     color: #8d8d8d;
+    font-size: 10px;
 }
 
 h2 .meta {
     float: right;
     font-size: 15px;
+    font-weight: 100;
 }
 
 .pagination .prev {
