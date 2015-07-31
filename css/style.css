@@ -62,11 +62,18 @@ pre {
 
 code {
     font-family: Monaco, Consolas, "Andale Mono", "DejaVu Sans Mono", monospace;
+    display: inline-block;
+    padding: 0px 4px;
+    color: #c7254e;
+    background-color: #f9f2f4;
 }
 
 pre code {
     display: block;
     padding: 0.5em 1em;
+
+    color: initial;
+    background-color: initial;
     
     font-size: 95%;
     line-height: 140%;
