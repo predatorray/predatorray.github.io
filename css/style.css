@@ -145,6 +145,10 @@ h2 .meta {
     display: block;
 }
 
+#disqus_thread {
+    margin-top: 20px;
+}
+
 @media only screen and (max-width: 600px) {
     .container {
         padding: 20px 6px;
