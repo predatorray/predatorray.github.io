@@ -93,8 +93,16 @@ pre code {
     margin: 0 auto;
 }
 
+.posts h2 {
+    font-weight: normal;
+}
+
 .posts li {
     border-bottom: 1px solid #eeeeee;
+}
+
+.posts li p {
+    font-size: 14px;
 }
 
 .posts p {
@@ -133,7 +141,7 @@ article h2 {
 
 h2 .meta {
     float: right;
-    font-size: 15px;
+    font-size: 10px;
     font-weight: 100;
 }
 
