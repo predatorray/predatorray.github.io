@@ -130,6 +130,10 @@ article h2 {
     border-bottom: 1px solid #eee;
 }
 
+article img {
+    width: 100%;
+}
+
 .meta {
     display: block;
     margin-bottom: 14px;
