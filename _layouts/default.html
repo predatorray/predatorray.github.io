@@ -23,11 +23,11 @@
   {% endfor %} {% endif %}
 </head>
 <body>
-  <header>
-    <h1><a href="/">{{ site.title }}</a></h1>
-  </header>
   <div class="container">
-  {{ content }}
+    <header>
+      <h1><a href="/">{{ site.title }}</a></h1>
+    </header>
+    {{ content }}
   </div>
   <footer>
     <a href="/"><img class="logo" src="/images/ray.png"></a>
@@ -44,7 +44,7 @@
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-  
+
     ga('create', 'UA-41956987-1', 'predatorray.me');
     ga('send', 'pageview');
   </script>
