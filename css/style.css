@@ -114,12 +114,13 @@ pre code {
     margin-bottom: 36px;
 }
 
-.post li {
-    border-left: 7px solid #eee;
+.posts li:nth-child(odd) {
     padding-left: 30px;
+    border-left: 7px solid #eee;
 }
 
 .posts li:nth-child(even) {
+    padding-left: 30px;
     border-left: 7px solid #ccc;
 }
 
