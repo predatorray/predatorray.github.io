@@ -114,6 +114,19 @@ pre code {
     margin-bottom: 36px;
 }
 
+.post li {
+    border-left: 7px solid #eee;
+    padding-left: 30px;
+}
+
+.posts li:nth-child(even) {
+    border-left: 7px solid #ccc;
+}
+
+.posts li:hover {
+    border-left: 7px solid #f77;
+}
+
 article {
     padding: 30px 20px;
     max-width: 800px;
@@ -162,22 +175,6 @@ h2 .meta {
 
 #disqus_thread {
     margin-top: 20px;
-}
-
-@media only screen and (min-width: 600px) {
-
-    .post li {
-        border-left: 7px solid #eee;
-        padding-left: 30px;
-    }
-
-    .posts li:nth-child(even) {
-        border-left: 7px solid #ccc;
-    }
-
-    .posts li:hover {
-        border-left: 7px solid #f77;
-    }
 }
 
 @media only screen and (max-width: 600px) {
