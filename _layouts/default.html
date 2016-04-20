@@ -49,6 +49,9 @@
               return true;
           }
           var url = $(this).attr('href');
+          if (!url || url === '' || url.startsWith('#')) {
+              return true;
+          }
           ga('send', 'event', 'outbound', 'click', url, {
               'transport': 'beacon',
               'hitCallback': function () {
