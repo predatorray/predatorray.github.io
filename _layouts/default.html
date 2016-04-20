@@ -41,26 +41,5 @@
     ga('create', 'UA-41956987-1', 'predatorray.me');
     ga('send', 'pageview');
   </script>
-  <script src="{{ site.baseurl }}/js/jquery.min.js"></script>
-  <script type="text/javascript">
-  $(function () {
-      $('a[href]').click(function (e) {
-          if (!ga) {
-              return true;
-          }
-          var url = $(this).attr('href');
-          if (!url || url === '' || url.startsWith('#')) {
-              return true;
-          }
-          ga('send', 'event', 'outbound', 'click', url, {
-              'transport': 'beacon',
-              'hitCallback': function () {
-                  document.location = url;
-              }
-          });
-          return false;
-      });
-  });
-  </script>
 </body>
 </html>
