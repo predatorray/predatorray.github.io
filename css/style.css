@@ -178,6 +178,26 @@ h2 .meta {
     margin-top: 20px;
 }
 
+.ads > p {
+    font-size: 13px;
+}
+
+.ads .ad-tag {
+    display: inline-block;
+    padding: 0 3px;
+    margin-right: 5px;
+    line-height: 15px;
+    color: #fff;
+    background-color: #edb802;
+    font-size: 13px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+
+.ads a {
+    color: black;
+}
+
 @media only screen and (max-width: 600px) {
     .container {
         padding: 20px 6px;
