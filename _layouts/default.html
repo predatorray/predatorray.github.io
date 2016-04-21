@@ -41,5 +41,22 @@
     ga('create', 'UA-41956987-1', 'predatorray.me');
     ga('send', 'pageview');
   </script>
+  <script src="{{ site.baseurl }}/js/jquery.min.js"></script>
+  <script type="text/javascript">
+  $(function () {
+      $('.ga-event-ad').click(function (e) {
+          var $e = $(this);
+          setTimeout(function () {
+              var adId = $e.data('ad-id');
+              if (!adId) {
+                  adId = 'N/A';
+              }
+              ga && ga('send', 'event', 'ad', 'click', adId, {
+                  'transport': 'beacon'
+              });
+          }, 0);
+      });
+  });
+  </script>
 </body>
 </html>
