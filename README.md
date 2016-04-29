@@ -1,5 +1,4 @@
-Ray's Blog
+季文昊的博客
 ==========
 
-[Home page](http://www.predatorray.me/)
-
+[主页](http://www.predatorray.me/)
