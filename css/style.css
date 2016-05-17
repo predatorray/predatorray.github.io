@@ -187,11 +187,16 @@ h2 .meta {
     margin-top: 20px;
 }
 
+.ads {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
 .ads > p {
     font-size: 13px;
 }
 
-.ads .ad-tag {
+.ads .ad-text .ad-tag {
     display: inline-block;
     padding: 0 3px;
     margin-right: 5px;
@@ -203,8 +208,30 @@ h2 .meta {
     border-radius: 2px;
 }
 
-.ads a {
+.ads .ad-test a {
     color: black;
+}
+
+.ads .ad-image img {
+    width: 100%;
+}
+
+.ads .ad-image .ad-tag {
+    position: absolute;
+    color: #fff;
+    background-color: #edb802;
+    padding: 0 3px;
+    margin-right: 5px;
+    line-height: 15px;
+    display: inline-block;
+    font-size: 10px;
+    -webkit-border-bottom-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+}
+
+.ads .ad-image:hover .ad-tag {
+    opacity: 0.4;
+    background-color: #777;
 }
 
 @media only screen and (max-width: 600px) {
