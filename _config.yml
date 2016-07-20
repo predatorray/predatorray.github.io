@@ -1,15 +1,29 @@
-# Site settings
-title: 季文昊的博客
-tagline: ''
-sidebar_image: /images/cover.jpg
+# Blog settings
+permalink: /:categories/:title/
 lang: 'zh-cmn-Hans'
-url: http://www.predatorray.me
+
+
+# My variables
+name: 季文昊的博客
+google_verification: null
 author: 季文昊
 plus: https://plus.google.com/+%E5%AD%A3%E6%96%87%E6%98%8A/about
 
-# Build settings
-markdown: kramdown
-highlighter: rouge
-baseurl: # the subpath of your site, e.g. /blog/
 
-permalink:   /:categories/:title/
+# File management
+include: [".htaccess"]
+exclude: ["README.md", "LICENSE"]
+
+
+# Sass
+sass:
+  style: :compressed
+  sass_dir: _sass
+
+
+# Markdown
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+highlighter: rouge

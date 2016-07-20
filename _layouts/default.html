@@ -1,58 +1,50 @@
 <!DOCTYPE html>
 <html lang="{{ site.lang }}">
+
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>{% if page.title %}{{ page.title }} - {% endif %}{{ site.title }}</title>
-  <meta name="viewport" content="width=device-width">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-  {% if page.keywords %}<meta name="keywords" content="{{ page.keywords }}">{% endif %}
-  {% if page.description %}<meta name="description" content="{{ page.description }}">{% endif %}
-  {% if site.author %}<meta name="author" content="{{ site.author }}">{% endif %}
+    {% if page.title %}
+        <title>{{ page.title }}</title>
+    {% else %}
+        <title>{{ site.name }}</title>
+    {% endif %}
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="{{ site.baseurl }}/css/style.css" type="text/css">
+    {% if page.keywords %}<meta name="keywords" content="{{ page.keywords }}">{% endif %}
+    {% if page.description %}<meta name="description" content="{{ page.description }}">{% endif %}
+    {% if site.author %}<meta name="author" content="{{ site.author }}">{% endif %}
+    <meta name="description" content="{{ site.description }}">
 
-  {% if site.plus %}<link rel="author" href="{{ site.plus }}">{% endif %}
-  {% if page.alternates %} {% for alternate in page.alternates %}
-  <link rel="alternate" type="{{ alternate.type }}" title="{{ alternate.title }}" href="{{ alternate.href }}">
-  {% endfor %} {% endif %}
+    {% if site.google_verification %}
+        <meta name="google-site-verification" content="{{ site.google_verify }}">
+    {% endif %}
+
+    <link rel="icon" href="/assets/img/favicon.png">
+    <link href='http://fonts.useso.com/css?family=Inconsolata:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css">
+
+    {% if site.plus %}<link rel="author" href="{{ site.plus }}">{% endif %}
+    {% if page.alternates %} {% for alternate in page.alternates %}
+    <link rel="alternate" type="{{ alternate.type }}" title="{{ alternate.title }}" href="{{ alternate.href }}">
+    {% endfor %} {% endif %}
 </head>
-<body>
-  <div class="container">
-    <header>
-      <h1><a href="/">{{ site.title }}</a></h1>
-    </header>
-    {{ content }}
-  </div>
-  <footer>
-    <a href="/"><img class="logo" src="/images/ray.png"></a>
-  </footer>
-  <script type="text/javascript">
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    ga('create', 'UA-41956987-1', 'predatorray.me');
-    ga('send', 'pageview');
-  </script>
-  <script src="{{ site.baseurl }}/js/jquery.min.js"></script>
-  <script type="text/javascript">
-  $(function () {
-      $('.ga-event-ad').click(function (e) {
-          var $e = $(this);
-          setTimeout(function () {
-              var adId = $e.data('ad-id');
-              if (!adId) {
-                  adId = 'N/A';
-              }
-              ga && ga('send', 'event', 'ad', 'click', adId, {
-                  'transport': 'beacon'
-              });
-          }, 0);
-      });
-  });
-  </script>
+<body>
+
+    <div class="wrapper">
+        {{ content }}
+    </div>
+
+    <script type="text/javascript">
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-41956987-1', 'predatorray.me');
+      ga('send', 'pageview');
+    </script>
 </body>
+
 </html>

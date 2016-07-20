@@ -1,18 +1,25 @@
 ---
 layout: default
-alternates:
-  - type: application/atom+xml
-    title: Ray's Blog
-    href: feed.xml
 ---
-<ul class="posts">
-  {% for post in site.posts %}
-    <li>
-      <h2>
-        <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
-        <span class="meta">{{ post.date | date: "%Y年%m月%d日" }}</span>
-      </h2>
-      {{ post.excerpt }}
-    </li>
-  {% endfor %}
-</ul>
+
+{% include header.html %}
+<div class="portfolio">
+    <h1>项目：</h1>
+    <ul>
+        {% for project in site.data.projects %}
+        <li>
+            <a href="{{ project.url }}">{{ project.name }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+<div class="blog">
+    <h1>博客：</h1>
+    <ul>
+        {% for post in site.posts %}
+        <li>
+            <span class="date">{{ post.date | date: "%Y-%m-%d" }}</span> <a href="{{ post.url }}">/{{ post.title }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
