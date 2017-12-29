@@ -79,7 +79,7 @@ systemctl start supervisor
 
 ## 客户端配置
 
-![](static/shadowsocks-configuration-screenshot.png)
+![](images/c60590d6b8b65825f3392877bbef9176.png)
 
 在shadowsocks的配置栏中，地址填Linux主机的IP地址。由于使用kcptun，第一行端口不需要填，如直接连shadowsocks，填`8388`。加密方式选`aes-256-cfb`。
 
