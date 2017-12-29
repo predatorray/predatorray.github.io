@@ -67,7 +67,7 @@ user = nobody
 command = /usr/local/kcptun/server_linux_amd64 --target '127.0.0.1:8388' --listen ':29900' --crypt 'aes'
 ```
 
-其中，`<shadowsocks的密码>`需更换为你自己的密码，之后在客户端连接时需要。`-p 8388`和`--listen ':29900'`为端口配置，可以自行修改，但是需要注意`--target '127.0.0.1:8388'`中的端口需要和`-p 8388`中的。
+其中，`<shadowsocks的密码>`需更换为你自己的密码，之后在客户端连接时需要。`-p 8388`和`--listen ':29900'`为端口配置，可以自行修改，但是需要注意`--target '127.0.0.1:8388'`中的端口需要和`-p 8388`中的保持一致。
 
 ### 启动
 
@@ -77,3 +77,10 @@ systemctl start supervisor
 
 至此，服务器这边的配置就完成了。
 
+## 客户端配置
+
+![](static/shadowsocks-configuration-screenshot.png)
+
+在shadowsocks的配置栏中，地址填Linux主机的IP地址。由于使用kcptun，第一行端口不需要填，如直接连shadowsocks，填`8388`。加密方式选`aes-256-cfb`。
+
+在kcptun配置栏中，Kcptun Port填`29900`，mode选`fast2`，Encryption选`aes`，密码使用默认的。
