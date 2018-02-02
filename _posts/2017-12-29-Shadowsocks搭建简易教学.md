@@ -2,7 +2,7 @@
 layout: post
 title: Shadowsocks搭建简易教学
 comments: true
-keywords: shadowsocks,翻墙,代理,kcptun
+keywords: shadowsocks,kcptun,安装,教程,翻墙,代理
 ---
 
 # 事先准备
