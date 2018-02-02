@@ -19,6 +19,8 @@ keywords: shadowsocks,kcptun,安装,教程,翻墙,代理
 
 以下操作都需要使用`root`用户。
 
+当然，如果你已经安装了Docker，那么可以参考[shadowsocks-kcptun-docker](https://github.com/predatorray/shadowsocks-kcptun-docker)，直接完成服务器部分的安装，直接看[客户端配置](#client-configurations)。
+
 ## 安装Python
 
     apt-get update # 更新源
@@ -66,7 +68,7 @@ kcptun是一款能有效提升shadowsocks速度的加速器软件，目前shadow
 
 至此，服务器这边的配置就完成了。
 
-## 客户端配置
+## <a id="client-configurations"></a>客户端配置
 
 ![](/images/c60590d6b8b65825f3392877bbef9176.png)
 
