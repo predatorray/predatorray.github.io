@@ -4,11 +4,8 @@ import {
   HashRouter as Router,
   Route,
   Routes,
-  useNavigate,
-  useParams,
 } from 'react-router-dom';
 import {
-  Container,
   createTheme,
   ThemeProvider,
 } from "@mui/material";
@@ -36,19 +33,19 @@ function App() {
           <Routes>
             <Route path="/" element={
               <>
-                <HeaderBar />
+                <HeaderBar current="Home" />
                 <WelcomePage/>
               </>
             }/>
             <Route path="/resume" element={
               <>
-                <HeaderBar displaysTitle={true} />
+                <HeaderBar current="Resume" displaysTitle={true} />
                 <ResumePage/>
               </>
             }/>
             <Route path="/projects" element={
               <>
-                <HeaderBar displaysTitle={true} />
+                <HeaderBar current="Projects" displaysTitle={true} />
                 <ProjectsPage/>
               </>
             }/>
