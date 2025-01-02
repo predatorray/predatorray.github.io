@@ -1,10 +1,11 @@
-import {Box, Button, Chip, Container, List, ListItem, Stack, Typography} from "@mui/material";
+import {Box, Button, Chip, ChipProps, Container, List, ListItem, Stack, Theme, Typography} from "@mui/material";
 import React, {useState} from "react";
 import WorkIcon from '@mui/icons-material/Work'
 import SchoolIcon from '@mui/icons-material/School';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import FooterLinks from "./FooterLinks";
 import {ResponsiveTimeline, ResponsiveTimelineItem} from "./ResponsiveTimeline";
+import {SxProps} from "@mui/system";
 
 const experience = [
   {
@@ -120,6 +121,16 @@ function ExpandOrCollapse({ children }: { children: React.ReactNode }) {
   )
 }
 
+function SkillChip({ skill, size, sx }: {
+  skill: string;
+  size?: ChipProps['size'];
+  sx?: SxProps<Theme>;
+}) {
+  return (
+    <Chip label={skill} variant="outlined" size={size} sx={{ fontFamily: 'monospace', ...sx }} />
+  )
+}
+
 export default function ResumePage() {
   return (
     <Container className="fade-in-bottom" component="main" maxWidth="lg" sx={{
@@ -149,7 +160,7 @@ export default function ResumePage() {
                   <Typography variant="body2" color="textPrimary">{e.location}</Typography>
                   <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
                     {
-                      e.skills.map((skill, i) => (<Chip key={i} label={skill} variant="outlined" size="small" sx={{ fontFamily: 'monospace', fontSize: 10 }} />))
+                      e.skills.map((skill, i) => (<SkillChip key={i} skill={skill} size="small" sx={{ fontSize: 10 }} />))
                     }
                   </Stack>
                   <Box>
@@ -221,6 +232,14 @@ export default function ResumePage() {
           ))
         }
       </List>
+      <Typography variant="h5" sx={{ my: 5, textDecoration: 'underline', }}>Skills</Typography>
+      <Box>
+        {
+          Array.from(new Set(experience.flatMap(e => e.skills))).map((skill, i) => (
+            <SkillChip key={i} skill={skill} sx={{ m: 1, fontWeight: 600 }} />
+          ))
+        }
+      </Box>
       <FooterLinks/>
     </Container>
   );
