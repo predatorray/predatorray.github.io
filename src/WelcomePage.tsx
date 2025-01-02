@@ -36,8 +36,8 @@ export default function WelcomePage() {
           maxWidth: 460,
           margin: "0 auto",
         }}>
-          I'm a professional <b>software engineer</b> skilled in Web, Middleware and Big Data,
-          and also an amateur <b>photographer</b> and <b>snowboarder</b>.
+          I'm a professional <b>Software Engineer</b> skilled in Web, Middleware and Big Data,
+          and also an amateur <b>Photographer</b> and <b>Snowboarder</b>.
         </Typography>
       </Box>
       <FooterLinks/>

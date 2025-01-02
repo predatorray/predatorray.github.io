@@ -1,11 +1,11 @@
-import {Box, Button, Chip, ChipProps, Container, List, ListItem, Stack, Theme, Typography} from "@mui/material";
+import {Box, Button, Container, List, ListItem, Stack, Typography} from "@mui/material";
 import React, {useState} from "react";
 import WorkIcon from '@mui/icons-material/Work'
 import SchoolIcon from '@mui/icons-material/School';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import FooterLinks from "./FooterLinks";
 import {ResponsiveTimeline, ResponsiveTimelineItem} from "./ResponsiveTimeline";
-import {SxProps} from "@mui/system";
+import SkillChip from "./SkillChip";
 
 const experience = [
   {
@@ -16,6 +16,7 @@ const experience = [
     skills: [
       'Java',
       'Typescript',
+      'React',
       'AWS',
       'Amazon Redshift',
       'Amazon OpenSearch',
@@ -49,7 +50,7 @@ const experience = [
     ],
     positions: [
       {
-        name: 'MTS 1, Software Engineer',
+        name: 'Member of Technical Staff 1, Software Engineer',
         from: 'Feb 2021',
         to: 'Jul 2022',
       },
@@ -121,16 +122,6 @@ function ExpandOrCollapse({ children }: { children: React.ReactNode }) {
   )
 }
 
-function SkillChip({ skill, size, sx }: {
-  skill: string;
-  size?: ChipProps['size'];
-  sx?: SxProps<Theme>;
-}) {
-  return (
-    <Chip label={skill} variant="outlined" size={size} sx={{ fontFamily: 'monospace', ...sx }} />
-  )
-}
-
 export default function ResumePage() {
   return (
     <Container className="fade-in-bottom" component="main" maxWidth="lg" sx={{
@@ -158,9 +149,9 @@ export default function ResumePage() {
                   <Typography variant="h6" sx={{ fontWeight: 900 }}>{e.company}</Typography>
                   <Typography variant="body2" color="textPrimary">{e.type} &middot; {e.tenure}</Typography>
                   <Typography variant="body2" color="textPrimary">{e.location}</Typography>
-                  <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                  <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: 'wrap' }}>
                     {
-                      e.skills.map((skill, i) => (<SkillChip key={i} skill={skill} size="small" sx={{ fontSize: 10 }} />))
+                      e.skills.map((skill, i) => (<SkillChip key={i} skill={skill} size="small" sx={{ fontSize: 10, mb: '8px !important' }} />))
                     }
                   </Stack>
                   <Box>

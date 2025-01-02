@@ -7,7 +7,7 @@ export type HeaderName =
   | 'Projects'
   ;
 
-const HeaderLinks: {
+const headerLinks: {
   name: HeaderName;
   href: string;
 }[] = [
@@ -57,7 +57,7 @@ export default function HeaderBar({ displaysTitle, current }: {
                  }}
           >
             {
-              HeaderLinks.map((h, i) => (
+              headerLinks.map((h, i) => (
                 h.name === current ? (
                   <Link key={i} variant="button" underline="none" href={h.href} sx={{ cursor: 'initial' }} color="textSecondary">{h.name}</Link>
                 ) : (
