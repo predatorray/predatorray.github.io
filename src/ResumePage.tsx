@@ -1,4 +1,4 @@
-import {Button, Container, List, ListItem, Typography} from "@mui/material";
+import {Box, Button, Chip, Container, List, ListItem, Stack, Typography} from "@mui/material";
 import React, {useState} from "react";
 import WorkIcon from '@mui/icons-material/Work'
 import SchoolIcon from '@mui/icons-material/School';
@@ -12,6 +12,13 @@ const experience = [
     location: 'Vancouver, BC, Canada',
     type: 'Full-time',
     tenure: '2 yrs',
+    skills: [
+      'Java',
+      'Typescript',
+      'AWS',
+      'Amazon Redshift',
+      'Amazon OpenSearch',
+    ],
     description: [
     ],
     positions: [
@@ -27,6 +34,13 @@ const experience = [
     location: 'Shanghai, China',
     type: 'Full-time',
     tenure: '3 yrs and 3 mos',
+    skills: [
+      'Java',
+      'Kubernetes',
+      'Prometheus',
+      'Apache Kafka',
+      'Apache Flink',
+    ],
     description: [
       'Maintained and developed a streaming data platform that serves Kafka & Flink',
       'Drove the efficiency of on-call support',
@@ -50,6 +64,14 @@ const experience = [
     location: 'Shanghai, China',
     type: 'Full-time',
     tenure: '6 yrs',
+    skills: [
+      'Java',
+      'Docker',
+      'ElasticSearch',
+      'Apache Kafka',
+      'Apache Hadoop',
+      'Apache Hive',
+    ],
     description: [
       'Led the containerization refactoring of a large multi-module legacy system',
       'Responsible for designing and implementing major parts of a log collecting, tracing and analyzing system',
@@ -105,6 +127,7 @@ export default function ResumePage() {
       my: 10,
       flexDirection: "column",
     }}>
+      <Typography variant="h5" sx={{ my: 5, textDecoration: 'underline', }}>Experience & Education</Typography>
       <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
         {
           experience.map((e, i) => (
@@ -124,6 +147,13 @@ export default function ResumePage() {
                   <Typography variant="h6" sx={{ fontWeight: 900 }}>{e.company}</Typography>
                   <Typography variant="body2" color="textPrimary">{e.type} &middot; {e.tenure}</Typography>
                   <Typography variant="body2" color="textPrimary">{e.location}</Typography>
+                  <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                    {
+                      e.skills.map((skill, i) => (<Chip key={i} label={skill} variant="outlined" size="small" sx={{ fontFamily: 'monospace', fontSize: 10 }} />))
+                    }
+                  </Stack>
+                  <Box>
+                  </Box>
                   {
                     e.description.length > 0 && (
                       <ExpandOrCollapse>
