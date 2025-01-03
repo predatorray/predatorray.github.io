@@ -41,7 +41,7 @@ export default function HeaderBar({ displaysTitle, current }: {
     }}>
       <Container maxWidth="xl">
         <Toolbar variant="regular" sx={{
-          mt: 4,
+          md: 4,
         }}>
           <Typography variant="h6" color="primary" component="div" sx={{
             flexGrow: 1,
@@ -63,11 +63,15 @@ export default function HeaderBar({ displaysTitle, current }: {
           >
             {
               headerLinks.map((h, i) => (
-                h.name === current ? (
-                  <Link key={i} variant="button" underline="none" href={h.href} sx={{ cursor: 'initial' }} color="textSecondary">{h.name}</Link>
-                ) : (
-                  <Link key={i} variant="button" underline="hover" href={h.href}>{h.name}</Link>
-                )
+                <Link
+                  key={i}
+                  variant="button"
+                  underline="none"
+                  href={h.href}
+                  sx={h.name === current ? { cursor: 'initial' } : {}}
+                  color="textSecondary">
+                  {h.name}
+                </Link>
               ))
             }
           </Stack>

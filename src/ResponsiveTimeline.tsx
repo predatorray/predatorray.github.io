@@ -28,7 +28,7 @@ export function ResponsiveTimelineItem(
   } = oppositeContentProps ?? {};
   return (
     <TimelineItem>
-      <TimelineOppositeContent sx={{ pt: 2, ...oppositeContentSx }} {...otherOppositeContentProps}>
+      <TimelineOppositeContent sx={{ pt: 2, ...oppositeContentSx, minWidth: 70 }} {...otherOppositeContentProps}>
         {oppositeContent}
       </TimelineOppositeContent>
       <TimelineSeparator>
@@ -37,7 +37,7 @@ export function ResponsiveTimelineItem(
         </TimelineDot>
         { !lastItem && <TimelineConnector /> }
       </TimelineSeparator>
-      <TimelineContent>
+      <TimelineContent sx={{ minWidth: 160 }}>
         {children}
       </TimelineContent>
     </TimelineItem>
@@ -50,10 +50,8 @@ export function ResponsiveTimeline({ children }: { children: ReactNode }) {
       sx={{
         [`& .${timelineOppositeContentClasses.root}`]: {
           flex: {
-            xs: 1,
-            sm: 0.6,
-            md: 0.5,
-            lg: 0.2,
+            xs: 0,
+            sm: 0.2,
           },
         },
       }}

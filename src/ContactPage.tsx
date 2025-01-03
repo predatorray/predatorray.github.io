@@ -14,11 +14,24 @@ export default function ContactPage() {
           mt: 0,
         },
         '.MuiStack-root > *': {
-          mx: 3,
+          xs: {
+            marginLeft: 8,
+            marginRight: 8,
+          },
+          sm: {
+            marginLeft: 12,
+            marginRight: 12,
+          },
         },
         'svg': {
-          width: 50,
-          height: 50,
+          sm: {
+            width: 40,
+            height: 40,
+          },
+          md: {
+            width: 50,
+            height: 50,
+          },
         },
       },
     }}>

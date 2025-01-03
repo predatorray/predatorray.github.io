@@ -1,4 +1,4 @@
-import {Box, Button, Container, List, ListItem, Stack, Typography} from "@mui/material";
+import {Box, Button, List, ListItem, Stack, Typography} from "@mui/material";
 import React, {useState} from "react";
 import WorkIcon from '@mui/icons-material/Work'
 import SchoolIcon from '@mui/icons-material/School';
@@ -6,6 +6,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import FooterLinks from "./FooterLinks";
 import {ResponsiveTimeline, ResponsiveTimelineItem} from "./ResponsiveTimeline";
 import SkillChip from "./SkillChip";
+import MainContainer from "./MainContainer";
 
 const experience = [
   {
@@ -115,21 +116,16 @@ function ExpandOrCollapse({ children }: { children: React.ReactNode }) {
   return expanded ? (
     <>
       {children}
-      <Button variant="text" size="small" sx={{ fontSize: 12, textDecoration: "underline", minWidth: 'initial', textTransform: 'none' }} onClick={() => setExpanded(false)}>less</Button>
+      <Button variant="text" size="small" sx={{ fontSize: '0.75rem', textDecoration: "underline", minWidth: 'initial', textTransform: 'none' }} onClick={() => setExpanded(false)}>less</Button>
     </>
   ) : (
-    <Button variant="text" size="small" sx={{ fontSize: 12, textDecoration: "underline", minWidth: 'initial', textTransform: 'none' }} onClick={() => setExpanded(true)}>more</Button>
+    <Button variant="text" size="small" sx={{ fontSize: '0.75rem', textDecoration: "underline", minWidth: 'initial', textTransform: 'none' }} onClick={() => setExpanded(true)}>more</Button>
   )
 }
 
 export default function ResumePage() {
   return (
-    <Container className="fade-in-bottom" component="main" maxWidth="lg" sx={{
-      display: "flex",
-      my: 10,
-      flexDirection: "column",
-    }}>
-      <Typography variant="h5" sx={{ my: 5, textDecoration: 'underline', }}>Experience & Education</Typography>
+    <MainContainer>
       <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
         {
           experience.map((e, i) => (
@@ -139,8 +135,6 @@ export default function ResumePage() {
                   oppositeContentProps={{ color: 'textPrimary' }}
                   oppositeContent={
                     <>
-                      <Typography variant="overline" color="textPrimary" sx={{ fontWeight: 800 }}>{e.positions[e.positions.length - 1].from}</Typography>
-                        &nbsp;-&nbsp;
                       <Typography variant="overline" color="textPrimary" sx={{ fontWeight: 800 }}>{e.positions[0].to}</Typography>
                     </>
                   }
@@ -151,7 +145,7 @@ export default function ResumePage() {
                   <Typography variant="body2" color="textPrimary">{e.location}</Typography>
                   <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: 'wrap' }}>
                     {
-                      e.skills.map((skill, i) => (<SkillChip key={i} skill={skill} size="small" sx={{ fontSize: 10, mb: '8px !important' }} />))
+                      e.skills.map((skill, i) => (<SkillChip key={i} skill={skill} size="small" sx={{ fontSize: '0.625rem', mb: '8px !important' }} />))
                     }
                   </Stack>
                   <Box>
@@ -164,10 +158,7 @@ export default function ResumePage() {
                           '>ul': {
                             paddingInlineStart: 0,
                           },
-                          fontSize: {
-                            xs: 12,
-                            sm: 14,
-                          },
+                          fontSize: '0.875rem',
                         }}>
                             <ul>
                               {e.description.map((d, i) => (<li key={i}>{d}</li>))}
@@ -184,7 +175,7 @@ export default function ResumePage() {
                       oppositeContentProps={{ color: 'textSecondary' }}
                       oppositeContent={
                         <>
-                          <Typography variant="overline">{p.from}</Typography> - <Typography variant="overline">{p.to}</Typography>
+                          <Typography variant="overline" sx={{ display: 'inline-block' }}>{p.from}</Typography>
                         </>
                       }
                       timelineIcon={<NavigateNextIcon/>}
@@ -206,9 +197,7 @@ export default function ResumePage() {
                   oppositeContentProps={{ color: 'textSecondary' }}
                   oppositeContent={
                     <>
-                      <Typography variant="overline" color="textPrimary" sx={{ fontWeight: 800 }}>{e.from}</Typography>
-                      &nbsp;-&nbsp;
-                      <Typography variant="overline" color="textPrimary" sx={{ fontWeight: 800 }}>{e.to}</Typography>
+                      <Typography variant="overline" color="textPrimary" sx={{ fontWeight: 800 }}>{e.from} - {e.to}</Typography>
                     </>
                   }
                   timelineIcon={<SchoolIcon/>}
@@ -223,15 +212,14 @@ export default function ResumePage() {
           ))
         }
       </List>
-      <Typography variant="h5" sx={{ my: 5, textDecoration: 'underline', }}>Skills</Typography>
-      <Box>
+      <Box sx={{ my: 5 }}>
         {
           Array.from(new Set(experience.flatMap(e => e.skills))).map((skill, i) => (
-            <SkillChip key={i} skill={skill} sx={{ m: 1, fontWeight: 600 }} />
+            <SkillChip key={i} skill={skill} sx={{ m: 0.5, fontWeight: 600 }} />
           ))
         }
       </Box>
       <FooterLinks/>
-    </Container>
+    </MainContainer>
   );
 }

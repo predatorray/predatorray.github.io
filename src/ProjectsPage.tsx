@@ -1,9 +1,10 @@
 import React from "react";
-import {Box, Container, Link, Stack, Typography} from "@mui/material";
+import {Box, Link, Stack, Typography} from "@mui/material";
 import GitHubIcon from '@mui/icons-material/GitHub';
 import FooterLinks from "./FooterLinks";
 import {ResponsiveTimeline, ResponsiveTimelineItem} from "./ResponsiveTimeline";
 import SkillChip from "./SkillChip";
+import MainContainer from "./MainContainer";
 
 const projects = [
   {
@@ -84,11 +85,7 @@ const projects = [
 
 export default function ProjectsPage() {
   return (
-    <Container className="fade-in-bottom" component="main" maxWidth="lg" sx={{
-      display: "flex",
-      my: 10,
-      flexDirection: "column",
-    }}>
+    <MainContainer>
       <ResponsiveTimeline>
         {
           projects.map((p, i) => (
@@ -105,7 +102,13 @@ export default function ProjectsPage() {
                   {p.href ? <Link href={p.href} target="_blank" rel="noopener">{p.name}</Link> : p.name}
                 </Typography>
                 <Typography variant="body2" color="textPrimary">{p.type}</Typography>
-                <Typography variant="body1" color="textPrimary" sx={{ my: 2 }}>{p.description}</Typography>
+                <Typography variant="body1" color="textPrimary" sx={{
+                  my: 2,
+                  fontSize: {
+                    xs: 12,
+                    sm: 14,
+                  },
+                }}>{p.description}</Typography>
                 <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: 'wrap' }}>
                   {
                     p.skills.map((skill, i) => (<SkillChip key={i} skill={skill} size="small" sx={{ fontSize: 10, mb: '8px !important' }} />))
@@ -117,6 +120,6 @@ export default function ProjectsPage() {
         }
       </ResponsiveTimeline>
       <FooterLinks/>
-    </Container>
+    </MainContainer>
   );
 }
