@@ -5,6 +5,7 @@ export type HeaderName =
   | 'Home'
   | 'Resume'
   | 'Projects'
+  | 'Contact'
   ;
 
 const headerLinks: {
@@ -23,6 +24,10 @@ const headerLinks: {
     name: 'Resume',
     href: '#/resume',
   },
+  {
+    name: 'Contact',
+    href: '#/contact',
+  }
 ];
 
 export default function HeaderBar({ displaysTitle, current }: {

@@ -1,9 +1,9 @@
-import {SvgIcon} from "@mui/material";
+import {SvgIcon, SvgIconProps} from "@mui/material";
 import React from "react";
 
-export default function UnsplashIcon() {
+export default function UnsplashIcon(props: SvgIconProps) {
   return (
-    <SvgIcon>
+    <SvgIcon {...props}>
       <svg width="32" height="32" viewBox="0 0 32 32" version="1.1"
            aria-labelledby="unsplash-home" aria-hidden="false"
            stroke="currentColor"

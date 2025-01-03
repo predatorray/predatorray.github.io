@@ -13,6 +13,7 @@ import WelcomePage from "./WelcomePage";
 import HeaderBar from "./HeaderBar";
 import ResumePage from "./ResumePage";
 import ProjectsPage from "./ProjectsPage";
+import ContactPage from "./ContactPage";
 
 const theme = createTheme({
   palette: {
@@ -47,6 +48,12 @@ function App() {
               <>
                 <HeaderBar current="Projects" displaysTitle={true} />
                 <ProjectsPage/>
+              </>
+            }/>
+            <Route path="/contact" element={
+              <>
+                <HeaderBar current="Contact" displaysTitle={true} />
+                <ContactPage/>
               </>
             }/>
           </Routes>
