@@ -14,20 +14,39 @@ export default function WelcomePage() {
         display: 'flex',
         justifyContent: 'center',
         flexDirection: 'column',
+        mx: 5,
       }}>
         <Avatar
           alt="Wenhao Ji"
           src="https://avatars.githubusercontent.com/u/1633376"
           sx={{
-            height: 160,
-            width: 160,
+            height: {
+              xs: 80,
+              sm: 100,
+              md: 160,
+            },
+            width: {
+              xs: 80,
+              sm: 100,
+              md: 160,
+            },
             margin: '0 auto',
+            display: {
+              display: 'none',
+              '@media screen and (min-height: 500px)': {
+                display: 'flex',
+              },
+            },
           }}
         />
         <Typography variant="h2" color="primary" sx={{
           fontWeight: 900,
           textAlign: "center",
           my: 4,
+          fontSize: {
+            xs: '2rem',
+            sm: '3.75rem',
+          },
         }}>
           Wenhao Ji
         </Typography>

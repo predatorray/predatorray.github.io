@@ -26,7 +26,11 @@ export default function FooterLinks() {
            spacing={2}
            divider={<Divider orientation="vertical" variant="middle" flexItem />}
            sx={{
-             mt: 10,
+             mt: {
+               xs: 4,
+               sm: 10,
+             },
+             mb: 5,
              justifyContent: "center",
            }}
     >
