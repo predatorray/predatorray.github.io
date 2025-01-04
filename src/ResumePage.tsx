@@ -126,7 +126,7 @@ function ExpandOrCollapse({ children }: { children: React.ReactNode }) {
 export default function ResumePage() {
   return (
     <MainContainer>
-      <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+      <List sx={{ width: '100%' }}>
         {
           experience.map((e, i) => (
             <ListItem key={i}>

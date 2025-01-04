@@ -41,7 +41,10 @@ export default function HeaderBar({ displaysTitle, current }: {
     }}>
       <Container maxWidth="xl">
         <Toolbar variant="regular" sx={{
-          md: 4,
+          mt: {
+            sm: 2,
+            md: 4,
+          }
         }}>
           <Typography variant="h6" color="primary" component="div" sx={{
             flexGrow: 1,
