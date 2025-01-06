@@ -7,109 +7,7 @@ import FooterLinks from "./FooterLinks";
 import {ResponsiveTimeline, ResponsiveTimelineItem} from "./ResponsiveTimeline";
 import SkillChip from "./SkillChip";
 import MainContainer from "./MainContainer";
-
-const experience = [
-  {
-    company: 'Amazon',
-    location: 'Vancouver, BC, Canada',
-    type: 'Full-time',
-    tenure: '2 yrs',
-    skills: [
-      'Java',
-      'Typescript',
-      'React',
-      'AWS',
-      'Amazon Redshift',
-      'Amazon OpenSearch',
-    ],
-    description: [
-    ],
-    positions: [
-      {
-        name: 'Software Development Engineer II',
-        from: 'Aug 2022',
-        to: 'Present',
-      },
-    ]
-  },
-  {
-    company: 'eBay',
-    location: 'Shanghai, China',
-    type: 'Full-time',
-    tenure: '3 yrs and 3 mos',
-    skills: [
-      'Java',
-      'Kubernetes',
-      'Prometheus',
-      'Apache Kafka',
-      'Apache Flink',
-    ],
-    description: [
-      'Maintained and developed a streaming data platform that serves Kafka & Flink',
-      'Drove the efficiency of on-call support',
-      'Owned the Monitoring & Alerting system of the streaming data platform',
-    ],
-    positions: [
-      {
-        name: 'Member of Technical Staff 1, Software Engineer',
-        from: 'Feb 2021',
-        to: 'Jul 2022',
-      },
-      {
-        name: 'Software Engineer 3',
-        from: 'May 2019',
-        to: 'Feb 2021'
-      },
-    ]
-  },
-  {
-    company: 'Baidu',
-    location: 'Shanghai, China',
-    type: 'Full-time',
-    tenure: '6 yrs',
-    skills: [
-      'Java',
-      'Docker',
-      'ElasticSearch',
-      'Apache Kafka',
-      'Apache Hadoop',
-      'Apache Hive',
-    ],
-    description: [
-      'Led the containerization refactoring of a large multi-module legacy system',
-      'Responsible for designing and implementing major parts of a log collecting, tracing and analyzing system',
-      'Assisted the development of Baidu Mall, and responsible for the infrastructure components to improve the efficiency of the development',
-      'Played a major role in developing a data warehousing system for online advertising',
-    ],
-    positions: [
-      {
-        name: 'Senior Software Engineer T5',
-        from: 'Mar 2017',
-        to: 'May 2019'
-      },
-      {
-        name: 'Senior Software Engineer T4',
-        from: 'Mar 2015',
-        to: 'Mar 2017'
-      },
-      {
-        name: 'Software Engineer T3',
-        from: 'Jul 2014',
-        to: 'Mar 2015'
-      },
-    ]
-  },
-];
-
-const education = [
-  {
-    institution: 'Southeast University',
-    location: 'Nanjing, China',
-    from: '2010',
-    to: '2014',
-    degree: 'Bachelor of Software Engineering',
-  }
-];
+import {Education, Experience} from "./constants";
 
 function ExpandOrCollapse({ children }: { children: React.ReactNode }) {
   const [expanded, setExpanded] = useState(false);
@@ -128,7 +26,7 @@ export default function ResumePage() {
     <MainContainer>
       <List sx={{ width: '100%' }}>
         {
-          experience.map((e, i) => (
+          Experience.map((e, i) => (
             <ListItem key={i}>
               <ResponsiveTimeline>
                 <ResponsiveTimelineItem
@@ -153,7 +51,7 @@ export default function ResumePage() {
                   {
                     e.description.length > 0 && (
                       <ExpandOrCollapse>
-                        <Typography variant="body1" color="textPrimary" sx={{
+                        <Typography variant="body1" component="div" color="textPrimary" sx={{
                           my: 3,
                           '>ul': {
                             paddingInlineStart: 0,
@@ -189,7 +87,7 @@ export default function ResumePage() {
           ))
         }
         {
-          education.map((e, i) => (
+          Education.map((e, i) => (
             <ListItem key={i}>
               <ResponsiveTimeline>
                 <ResponsiveTimelineItem
@@ -214,7 +112,7 @@ export default function ResumePage() {
       </List>
       <Box sx={{ my: 5 }}>
         {
-          Array.from(new Set(experience.flatMap(e => e.skills))).map((skill, i) => (
+          Array.from(new Set(Experience.flatMap(e => e.skills))).map((skill, i) => (
             <SkillChip key={i} skill={skill} sx={{ m: 0.5, fontWeight: 600 }} />
           ))
         }
