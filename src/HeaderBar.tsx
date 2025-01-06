@@ -36,7 +36,7 @@ export default function HeaderBar({ displaysTitle, current }: {
 }) {
   return (
     <AppBar position="static" color="primary" elevation={0} sx={{
-      backgroundColor: 'white',
+      backgroundColor: 'background.default',
       height: 72,
     }}>
       <Container maxWidth="xl">

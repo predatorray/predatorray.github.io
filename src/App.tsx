@@ -17,12 +17,20 @@ import ContactPage from "./ContactPage";
 
 const theme = createTheme({
   palette: {
+    text: {
+      primary: '#121212',
+      secondary: '#565656',
+    },
     primary: {
       main: '#121212',
     },
     secondary: {
       main: '#888',
-    }
+    },
+    background: {
+      default: '#fff',
+      paper: '#fff',
+    },
   },
 });
 
