@@ -2,9 +2,16 @@ import {ReactNode} from "react";
 import {Container} from "@mui/material";
 import {Breakpoint} from "@mui/system";
 
-export default function MainContainer({ children, maxWidth }: { children: ReactNode, maxWidth?: Breakpoint }) {
+export type Animation = 'FadeIn' | 'FadeInFromBottom';
+
+const ClassNamesPerAnimation: {[animation in Animation]: string} = {
+  'FadeIn': 'fade-in',
+  'FadeInFromBottom': 'fade-in-bottom',
+};
+
+export default function MainContainer({ children, maxWidth, animation }: { children: ReactNode, maxWidth?: Breakpoint, animation?: Animation }) {
   return (
-    <Container className="fade-in-bottom" component="main" maxWidth={maxWidth ?? 'lg'} sx={{
+    <Container className={animation ? ClassNamesPerAnimation[animation] : "fade-in-bottom"} component="main" maxWidth={maxWidth ?? 'lg'} sx={{
       display: "flex",
       my: {
         sx: 6,
