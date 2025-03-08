@@ -214,41 +214,70 @@ export const Projects = [
   },
 ];
 
-export const Photos = [
+export interface Photo {
+  regularSrc: string;
+  fullSrc: string;
+  description: string;
+  link: string;
+}
+
+export const Photos: { section: string; photos: Photo[] }[] = [
   {
-    regularSrc: 'https://images.unsplash.com/photo-1671850768178-33b5c0fed4dd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8MXx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=80&w=1080',
-    fullSrc: 'https://images.unsplash.com/photo-1671850768178-33b5c0fed4dd?crop=entropy&cs=srgb&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8MXx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=85',
-    description: 'Lake Louise in Winter',
-    link: 'https://unsplash.com/photos/a-cabin-in-the-middle-of-a-snowy-mountain-range-bH6I5xCUKrw',
+    section: "Winter in Banff",
+    photos: [
+      {
+        regularSrc: 'https://images.unsplash.com/photo-1671850768178-33b5c0fed4dd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8MXx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=80&w=1080',
+        fullSrc: 'https://images.unsplash.com/photo-1671850768178-33b5c0fed4dd?crop=entropy&cs=srgb&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8MXx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=85',
+        description: 'Lake Louise',
+        link: 'https://unsplash.com/photos/a-cabin-in-the-middle-of-a-snowy-mountain-range-bH6I5xCUKrw',
+      },
+      {
+        regularSrc: 'https://images.unsplash.com/photo-1597816165828-56c53e9394f4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8Mnx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=80&w=1080',
+        fullSrc: 'https://images.unsplash.com/photo-1597816165828-56c53e9394f4?crop=entropy&cs=srgb&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8Mnx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=85',
+        description: 'Moraine Lake',
+        link: 'https://unsplash.com/photos/lake-near-snow-covered-mountain-during-daytime-mj64DBw10PE',
+      },
+      {
+        regularSrc: 'https://images.unsplash.com/photo-1671850542704-807a9115af76?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8M3x8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=80&w=1080',
+        fullSrc: 'https://images.unsplash.com/photo-1671850542704-807a9115af76?crop=entropy&cs=srgb&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8M3x8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=85',
+        description: 'Morant’s Curve',
+        link: 'https://unsplash.com/photos/a-train-traveling-through-a-snow-covered-forest-udc3ZpF3zu8',
+      },
+      {
+        regularSrc: 'https://images.unsplash.com/photo-1671850332276-40e3dec384ce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8NHx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=80&w=1080',
+        fullSrc: 'https://images.unsplash.com/photo-1671850332276-40e3dec384ce?crop=entropy&cs=srgb&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8NHx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=85',
+        description: 'Two Jake Lake',
+        link: 'https://unsplash.com/photos/a-snow-covered-field-with-a-mountain-in-the-background-Wlc5n-Qi7hU',
+      },
+      {
+        regularSrc: 'https://images.unsplash.com/photo-1671851021764-3cad4263e1db?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8NXx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=80&w=1080',
+        fullSrc: 'https://images.unsplash.com/photo-1671851021764-3cad4263e1db?crop=entropy&cs=srgb&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8NXx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=85',
+        description: 'Lake Louise',
+        link: 'https://unsplash.com/photos/two-people-standing-in-the-snow-near-mountains-CylqDYfbtjU',
+      },
+    ],
   },
   {
-    regularSrc: 'https://images.unsplash.com/photo-1597816165828-56c53e9394f4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8Mnx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=80&w=1080',
-    fullSrc: 'https://images.unsplash.com/photo-1597816165828-56c53e9394f4?crop=entropy&cs=srgb&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8Mnx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=85',
-    description: 'Moraine Lake',
-    link: 'https://unsplash.com/photos/lake-near-snow-covered-mountain-during-daytime-mj64DBw10PE',
-  },
-  {
-    regularSrc: 'https://images.unsplash.com/photo-1671850542704-807a9115af76?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8M3x8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=80&w=1080',
-    fullSrc: 'https://images.unsplash.com/photo-1671850542704-807a9115af76?crop=entropy&cs=srgb&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8M3x8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=85',
-    description: 'Morant’s Curve',
-    link: 'https://unsplash.com/photos/a-train-traveling-through-a-snow-covered-forest-udc3ZpF3zu8',
-  },
-  {
-    regularSrc: 'https://images.unsplash.com/photo-1671850332276-40e3dec384ce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8NHx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=80&w=1080',
-    fullSrc: 'https://images.unsplash.com/photo-1671850332276-40e3dec384ce?crop=entropy&cs=srgb&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8NHx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=85',
-    description: 'Two Jake Lake in Winter',
-    link: 'https://unsplash.com/photos/a-snow-covered-field-with-a-mountain-in-the-background-Wlc5n-Qi7hU',
-  },
-  {
-    regularSrc: 'https://images.unsplash.com/photo-1671851021764-3cad4263e1db?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8NXx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=80&w=1080',
-    fullSrc: 'https://images.unsplash.com/photo-1671851021764-3cad4263e1db?crop=entropy&cs=srgb&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8NXx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=85',
-    description: 'Lake Louise in Winter',
-    link: 'https://unsplash.com/photos/two-people-standing-in-the-snow-near-mountains-CylqDYfbtjU',
-  },
-  {
-    regularSrc: 'https://images.unsplash.com/photo-1723652386871-dc8793a47dfe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8Nnx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=80&w=1080',
-    fullSrc: 'https://images.unsplash.com/photo-1723652386871-dc8793a47dfe?crop=entropy&cs=srgb&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8Nnx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=85',
-    description: 'Moraine Lake',
-    link: 'https://unsplash.com/photos/a-lake-surrounded-by-mountains-with-a-pine-tree-in-the-foreground-Y8eTCMULhpI',
+    section: "Summer in Banff",
+    photos: [
+      {
+        regularSrc: 'https://images.unsplash.com/photo-1723652386871-dc8793a47dfe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8Nnx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=80&w=1080',
+        fullSrc: 'https://images.unsplash.com/photo-1723652386871-dc8793a47dfe?crop=entropy&cs=srgb&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8Nnx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=85',
+        description: 'Moraine Lake',
+        link: 'https://unsplash.com/photos/a-lake-surrounded-by-mountains-with-a-pine-tree-in-the-foreground-Y8eTCMULhpI',
+      },
+      {
+        regularSrc: 'https://images.unsplash.com/photo-1723739034843-44cfdd887139?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8N3x8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=80&w=1080',
+        fullSrc: 'https://images.unsplash.com/photo-1723739034843-44cfdd887139?crop=entropy&cs=srgb&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8N3x8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=85',
+        description: 'Peyto Lake',
+        link: 'https://unsplash.com/photos/a-view-of-a-lake-surrounded-by-mountains-s6UB7Zu6Kt0',
+      },
+      {
+        regularSrc: 'https://images.unsplash.com/photo-1723652707288-54108fa22c7b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8OHx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=80&w=1080',
+        fullSrc: 'https://images.unsplash.com/photo-1723652707288-54108fa22c7b?crop=entropy&cs=srgb&fm=jpg&ixid=M3wxMjA3fDB8MXxhbGx8OHx8fHx8fHx8MTc0MTQwNTIzN3w&ixlib=rb-4.0.3&q=85',
+        description: 'Lake Louise',
+        link: 'https://unsplash.com/photos/a-body-of-water-surrounded-by-mountains-and-trees-ux0fsMXgoe4',
+      },
+    ],
   },
 ];
