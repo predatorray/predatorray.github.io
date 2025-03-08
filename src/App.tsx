@@ -14,6 +14,7 @@ import HeaderBar from "./HeaderBar";
 import ResumePage from "./ResumePage";
 import ProjectsPage from "./ProjectsPage";
 import ContactPage from "./ContactPage";
+import Gallery from "./Gallery";
 
 const theme = createTheme({
   palette: {
@@ -62,6 +63,12 @@ function App() {
               <>
                 <HeaderBar current="Contact" displaysTitle={true} />
                 <ContactPage/>
+              </>
+            }/>
+            <Route path="/gallery" element={
+              <>
+                <HeaderBar current="Gallery" displaysTitle={true} />
+                <Gallery/>
               </>
             }/>
           </Routes>

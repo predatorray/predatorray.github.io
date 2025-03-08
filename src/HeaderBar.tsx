@@ -16,6 +16,7 @@ export type HeaderName =
   | 'Home'
   | 'Resume'
   | 'Projects'
+  | 'Gallery'
   | 'Contact'
   ;
 
@@ -34,6 +35,10 @@ const headerLinks: {
   {
     name: 'Resume',
     href: '#/resume',
+  },
+  {
+    name: 'Gallery',
+    href: '#/gallery',
   },
   {
     name: 'Contact',
@@ -72,7 +77,8 @@ export default function HeaderBar({ displaysTitle, current }: {
                    justifyContent: "right",
                    display: {
                      xs: 'none',
-                     sm: 'flex',
+                     sm: 'none',
+                     md: 'flex',
                    },
                  }}
           >
@@ -98,8 +104,8 @@ export default function HeaderBar({ displaysTitle, current }: {
             aria-label="menu"
             sx={{
               display: {
-                xs: 'flex',
-                sm: 'none',
+                sm: 'flex',
+                md: 'none',
               },
             }}
             onClick={() => setShowsDialog(true)}
