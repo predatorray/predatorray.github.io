@@ -3,7 +3,8 @@ import {
   Dialog,
   ImageList,
   ImageListItem,
-  ImageListItemBar, Typography,
+  ImageListItemBar,
+  Typography,
   useMediaQuery,
   useTheme
 } from "@mui/material";
