@@ -23,16 +23,16 @@ export default function WelcomePage() {
             height: {
               xs: 80,
               sm: 100,
-              md: 160,
+              md: 140,
             },
             width: {
               xs: 80,
               sm: 100,
-              md: 160,
+              md: 140,
             },
             margin: '0 auto',
             display: {
-              display: 'none',
+              xs: 'none',
               '@media screen and (min-height: 500px)': {
                 display: 'flex',
               },
@@ -40,23 +40,43 @@ export default function WelcomePage() {
           }}
         />
         <Typography variant="h2" color="primary" sx={{
-          fontWeight: 900,
+          fontWeight: 700,
           textAlign: "center",
-          my: 4,
+          mt: 4,
+          mb: 1.5,
           fontSize: {
             xs: '2rem',
-            sm: '3.75rem',
+            sm: '3rem',
+            md: '3.5rem',
           },
+          letterSpacing: '-0.01em',
         }}>
           Wenhao Ji
         </Typography>
-        <Typography variant="body2" color="textSecondary" sx={{
-          textAlign: "left",
-          maxWidth: 460,
-          margin: "0 auto",
+        <Typography variant="caption" color="textSecondary" sx={{
+          textAlign: "center",
+          mb: 3,
+          fontWeight: 200,
+          fontSize: {
+            xs: '0.85rem',
+            sm: '1rem',
+          },
+          letterSpacing: '0.1em',
+          textTransform: 'uppercase',
         }}>
-          I'm a professional <b>Software Engineer</b> skilled in Web, Middleware and Big Data,
-          and also an amateur <b>Photographer</b> and <b>Snowboarder</b>.
+          Software Engineer | Photographer | Snowboarder
+        </Typography>
+        <Typography variant="body1" color="textSecondary" sx={{
+          textAlign: "center",
+          maxWidth: 540,
+          margin: "0 auto",
+          lineHeight: 1.8,
+          fontSize: '1rem',
+          opacity: 0.9,
+        }}>
+          Passionate about building scalable <b>Web</b> architectures, robust <b>Middleware</b>, 
+          and high-performance <b>Big Data</b> solutions. I strive for excellence in code 
+          and find inspiration through the lens of my camera and on the snowy slopes.
         </Typography>
       </Box>
       <FooterLinks/>

@@ -33,6 +33,9 @@ const theme = createTheme({
       paper: '#fff',
     },
   },
+  typography: {
+    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+  },
 });
 
 function App() {
