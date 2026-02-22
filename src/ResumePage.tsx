@@ -1,13 +1,15 @@
-import {Box, Button, List, ListItem, Stack, Typography} from "@mui/material";
+import {Box, Button, Stack, Typography} from "@mui/material";
 import React, {useState} from "react";
 import WorkIcon from '@mui/icons-material/Work'
 import SchoolIcon from '@mui/icons-material/School';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import FooterLinks from "./FooterLinks";
 import {ResponsiveTimeline, ResponsiveTimelineItem} from "./ResponsiveTimeline";
 import SkillChip from "./SkillChip";
+import SkillWordCloud from "./SkillWordCloud";
 import MainContainer from "./MainContainer";
-import {Education, Experience} from "./constants";
+import {Education, Experience, Projects} from "./constants";
 
 function ExpandOrCollapse({ children }: { children: React.ReactNode }) {
   const [expanded, setExpanded] = useState(false);
@@ -24,99 +26,181 @@ function ExpandOrCollapse({ children }: { children: React.ReactNode }) {
 export default function ResumePage() {
   return (
     <MainContainer>
-      <List sx={{ width: '100%' }}>
+      <ResponsiveTimeline>
         {
           Experience.map((e, i) => (
-            <ListItem key={i}>
-              <ResponsiveTimeline>
-                <ResponsiveTimelineItem
-                  oppositeContentProps={{ color: 'textPrimary' }}
-                  oppositeContent={
-                    <>
-                      <Typography variant="overline" color="textPrimary" sx={{ fontWeight: 800 }}>{e.positions[0].to}</Typography>
-                    </>
-                  }
-                  timelineIcon={<WorkIcon/>}
-                >
-                  <Typography variant="h6" sx={{ fontWeight: 900 }}>{e.company}</Typography>
-                  <Typography variant="body2" color="textPrimary">{e.type} &middot; {e.tenure}</Typography>
-                  <Typography variant="body2" color="textPrimary">{e.location}</Typography>
-                  <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: 'wrap' }}>
-                    {
-                      e.skills.map((skill, i) => (<SkillChip key={i} skill={skill} size="small" sx={{ fontSize: '0.625rem', mb: '8px !important' }} />))
-                    }
-                  </Stack>
-                  <Box>
-                  </Box>
+            <ResponsiveTimelineItem
+              key={i}
+              oppositeContentProps={{ color: 'textSecondary' }}
+              oppositeContent={
+                <Typography variant="overline" color="textSecondary" sx={{
+                  fontWeight: 700,
+                  fontSize: '0.75rem',
+                  letterSpacing: '0.05em'
+                }}>
+                  {e.positions[0].to}
+                </Typography>
+              }
+              timelineIcon={<WorkIcon/>}
+            >
+              <Box sx={{
+                position: 'relative',
+                mb: 6,
+                p: 3,
+                borderRadius: 2,
+                bgcolor: 'background.paper',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+                border: '1px solid',
+                borderColor: 'divider',
+                transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                }
+              }}>
+                <Typography variant="caption" color="textSecondary" sx={{
+                  position: 'absolute',
+                  top: 24,
+                  right: 24,
+                  fontWeight: 500,
+                  display: { xs: 'none', sm: 'flex' },
+                  alignItems: 'center'
+                }}>
+                  <LocationOnIcon sx={{ fontSize: '1rem', mr: 0.5 }} />
+                  {e.location}
+                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>{e.company}</Typography>
+                <Typography variant="subtitle2" color="textSecondary" sx={{ fontWeight: 500, mb: 1 }}>
+                  {e.type} &middot; {e.tenure}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" sx={{ mb: 2, display: { xs: 'flex', sm: 'none' }, alignItems: 'center' }}>
+                  <LocationOnIcon sx={{ fontSize: '0.9rem', mr: 0.5 }} />
+                  {e.location}
+                </Typography>
+                <Stack direction="row" spacing={1} sx={{ mb: 2, flexWrap: 'wrap', gap: 1 }}>
                   {
-                    e.description.length > 0 && (
+                    e.skills.map((skill, i) => (
+                      <SkillChip
+                        key={i}
+                        skill={skill}
+                        size="small"
+                        sx={{
+                          fontSize: '0.75rem',
+                          height: 24,
+                          bgcolor: 'rgba(0,0,0,0.04)',
+                          border: 'none',
+                          fontWeight: 500,
+                          m: '0 !important'
+                        }}
+                      />
+                    ))
+                  }
+                </Stack>
+                {
+                  e.description.length > 0 && (
+                    <Box sx={{ mb: 2 }}>
                       <ExpandOrCollapse>
-                        <Typography variant="body1" component="div" color="textPrimary" sx={{
-                          my: 3,
-                          '>ul': {
-                            paddingInlineStart: 0,
+                        <Typography variant="body2" component="div" color="textSecondary" sx={{
+                          my: 2,
+                          lineHeight: 1.7,
+                          fontSize: '0.95rem',
+                          '& ul': {
+                            pl: 2,
+                            mt: 1,
+                            mb: 0,
+                            listStyleType: 'disc',
                           },
-                          fontSize: '0.875rem',
+                          '& li': {
+                            lineHeight: 1.5,
+                          },
                         }}>
-                            <ul>
-                              {e.description.map((d, i) => (<li key={i}>{d}</li>))}
-                            </ul>
+                          <ul>
+                            {e.description.map((d, i) => (<li key={i}>{d}</li>))}
+                          </ul>
                         </Typography>
                       </ExpandOrCollapse>
-                    )
-                  }
-                </ResponsiveTimelineItem>
-                {
-                  e.positions.map((p, i) => (
-                    <ResponsiveTimelineItem
-                      key={i}
-                      oppositeContentProps={{ color: 'textSecondary' }}
-                      oppositeContent={
-                        <>
-                          <Typography variant="overline" sx={{ display: 'inline-block' }}>{p.from}</Typography>
-                        </>
-                      }
-                      timelineIcon={<NavigateNextIcon/>}
-                    >
-                      <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>{p.name}</Typography>
-                    </ResponsiveTimelineItem>
-                  ))
+                    </Box>
+                  )
                 }
-              </ResponsiveTimeline>
-            </ListItem>
+                <Box sx={{
+                  mt: 2,
+                  pt: 2,
+                  borderTop: '1px dashed',
+                  borderColor: 'divider'
+                }}>
+                  {
+                    e.positions.map((p, i) => (
+                      <Box key={i} sx={{
+                        display: 'flex',
+                        alignItems: 'baseline',
+                        mb: i === e.positions.length - 1 ? 0 : 1
+                      }}>
+                        <NavigateNextIcon sx={{ fontSize: '0.9rem', color: 'secondary.main', mr: 1, verticalAlign: 'middle' }} />
+                        <Typography variant="body2" color="textSecondary" sx={{ fontWeight: 550, flexGrow: 1 }}>{p.name}</Typography>
+                        <Typography variant="caption" color="secondary" sx={{ ml: 1, whiteSpace: 'nowrap' }}>{p.from}</Typography>
+                      </Box>
+                    ))
+                  }
+                </Box>
+              </Box>
+            </ResponsiveTimelineItem>
           ))
         }
         {
           Education.map((e, i) => (
-            <ListItem key={i}>
-              <ResponsiveTimeline>
-                <ResponsiveTimelineItem
-                  key={i}
-                  oppositeContentProps={{ color: 'textSecondary' }}
-                  oppositeContent={
-                    <>
-                      <Typography variant="overline" color="textPrimary" sx={{ fontWeight: 800 }}>{e.from} - {e.to}</Typography>
-                    </>
-                  }
-                  timelineIcon={<SchoolIcon/>}
-                  lastItem={true}
-                >
-                  <Typography variant="h6" sx={{ fontWeight: 900 }}>{e.institution}</Typography>
-                  <Typography variant="body2" color="textSecondary">{e.degree}</Typography>
-                  <Typography variant="body2" color="textSecondary">{e.location}</Typography>
-                </ResponsiveTimelineItem>
-              </ResponsiveTimeline>
-            </ListItem>
+            <ResponsiveTimelineItem
+              key={i}
+              oppositeContentProps={{ color: 'textSecondary' }}
+              oppositeContent={
+                <Typography variant="overline" color="textSecondary" sx={{
+                  fontWeight: 700,
+                  fontSize: '0.75rem',
+                  letterSpacing: '0.05em'
+                }}>
+                  {e.from} - {e.to}
+                </Typography>
+              }
+              timelineIcon={<SchoolIcon/>}
+              lastItem={i === Education.length - 1}
+            >
+              <Box sx={{
+                position: 'relative',
+                mb: 6,
+                p: 3,
+                borderRadius: 2,
+                bgcolor: 'background.paper',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+                border: '1px solid',
+                borderColor: 'divider',
+                transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                }
+              }}>
+                <Typography variant="caption" color="textSecondary" sx={{
+                  position: 'absolute',
+                  top: 24,
+                  right: 24,
+                  fontWeight: 500,
+                  display: { xs: 'none', sm: 'flex' },
+                  alignItems: 'center'
+                }}>
+                  <LocationOnIcon sx={{ fontSize: '1rem', mr: 0.5 }} />
+                  {e.location}
+                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>{e.institution}</Typography>
+                <Typography variant="subtitle2" color="textSecondary" sx={{ fontWeight: 500, mb: 1 }}>{e.degree}</Typography>
+                <Typography variant="body2" color="textSecondary" sx={{ display: { xs: 'flex', sm: 'none' }, alignItems: 'center' }}>
+                  <LocationOnIcon sx={{ fontSize: '0.9rem', mr: 0.5 }} />
+                  {e.location}
+                </Typography>
+              </Box>
+            </ResponsiveTimelineItem>
           ))
         }
-      </List>
-      <Box sx={{ my: 5 }}>
-        {
-          Array.from(new Set(Experience.flatMap(e => e.skills))).map((skill, i) => (
-            <SkillChip key={i} skill={skill} sx={{ m: 0.5, fontWeight: 600 }} />
-          ))
-        }
-      </Box>
+      </ResponsiveTimeline>
+      <SkillWordCloud items={[...Experience, ...Projects]} />
       <FooterLinks/>
     </MainContainer>
   );

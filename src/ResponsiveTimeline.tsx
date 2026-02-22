@@ -27,17 +27,35 @@ export function ResponsiveTimelineItem(
     ...otherOppositeContentProps
   } = oppositeContentProps ?? {};
   return (
-    <TimelineItem>
-      <TimelineOppositeContent sx={{ pt: 2, ...oppositeContentSx, minWidth: 70 }} {...otherOppositeContentProps}>
+    <TimelineItem sx={{ minHeight: 120 }}>
+      <TimelineOppositeContent
+        sx={{
+          pt: 4.5,
+          ...oppositeContentSx,
+          minWidth: 70,
+        }}
+        {...otherOppositeContentProps}
+      >
         {oppositeContent}
       </TimelineOppositeContent>
       <TimelineSeparator>
-        <TimelineDot>
+        <TimelineDot color="primary" sx={{
+          p: 1.5,
+          my: 3,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+          bgcolor: 'background.paper',
+          border: '1px solid',
+          borderColor: 'divider',
+          '& .MuiSvgIcon-root': {
+            fontSize: '1.25rem',
+            color: 'text.primary',
+          }
+        }}>
           {timelineIcon}
         </TimelineDot>
-        { !lastItem && <TimelineConnector /> }
+        { !lastItem && <TimelineConnector sx={{ bgcolor: 'divider' }} /> }
       </TimelineSeparator>
-      <TimelineContent sx={{ minWidth: 160 }}>
+      <TimelineContent sx={{ minWidth: 160, pb: 0 }}>
         {children}
       </TimelineContent>
     </TimelineItem>

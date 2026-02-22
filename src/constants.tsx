@@ -23,6 +23,8 @@ export const Experience = [
       'AWS',
       'Amazon Redshift',
       'Amazon OpenSearch',
+      'Apache Spark',
+      'GenAI',
     ],
     description: [
     ],
@@ -47,9 +49,16 @@ export const Experience = [
       'Apache Flink',
     ],
     description: [
-      'Maintained and developed a streaming data platform that serves Kafka & Flink',
-      'Drove the efficiency of on-call support',
-      'Owned the Monitoring & Alerting system of the streaming data platform',
+      'Developed and maintained a high-throughput streaming platform powering Apache Kafka and Apache Flink workloads.',
+      'Migrated Kafka clusters from virtual machines to Kubernetes, improving scalability and operational consistency.',
+      'Delivered internal training on Kafka client internals, educating new and experienced engineers on deep technical concepts.',
+      'Designed a cross-data-center failover solution that enabled Flink job continuity in the event of infrastructure outages.',
+      'Boosted operational efficiency by building a Bash CLI tool to simplify repetitive support tasks.',
+      'Collaborated with the Support-Bot team to implement automated Slack responses for common support issues (e.g., FAQs, RCAs).',
+      'Created a custom Slack App to dynamically track and display the current on-call roster for better visibility and coordination.',
+      'Architected and deployed a highly available Prometheus cluster using Promxy, ensuring scalable and fault-tolerant monitoring.',
+      'Developed auto-remediation workflows triggered by alerts to minimize manual intervention and reduce MTTR.',
+      'Maintained full ownership of monitoring, logging, and alerting systems for the streaming platform, ensuring reliability and observability.',
     ],
     positions: [
       {
@@ -78,10 +87,11 @@ export const Experience = [
       'Apache Hive',
     ],
     description: [
-      'Led the containerization refactoring of a large multi-module legacy system',
-      'Responsible for designing and implementing major parts of a log collecting, tracing and analyzing system',
-      'Assisted the development of Baidu Mall, and responsible for the infrastructure components to improve the efficiency of the development',
-      'Played a major role in developing a data warehousing system for online advertising',
+      'Led the containerization of a large-scale legacy system, building a Docker-based deployment framework, standardizing secure base images, and orchestrating multi-module subsystems on Baidu App Engine; drove adoption through internal knowledge sharing.',
+      'Designed and implemented a high-performance distributed log tracing and analytics platform, inspired by Google Dapper and powered by Elasticsearch and Apache Storm, capable of processing ~2TB/day; also built a custom JavaScript SPA framework for log visualization.',
+      'Built core infrastructure components for Baidu Mall, including a shared Redis-based session system and an HTTP resource server backed by object storage, improving development efficiency across distributed subsystems.',
+      'Played a major role in development of a data warehousing platform for online advertising, designing ETL pipelines with Hive/Hadoop, creating a LISP-like DSL for HiveSQL, visualizing ETL dependencies, and authoring custom decimal UDFs to extend Hive’s capabilities.',
+      'Developed and optimized a core module for a Cloud Drive system, enabling users to upload and manage media assets efficiently. Improved performance via HTTP Cache and Validation enhancements, reducing load times for high-traffic media delivery. Designed and built the first Web UI from scratch, streamlining user interactions and adoption.',
     ],
     positions: [
       {
@@ -118,8 +128,8 @@ export const Experience = [
       },
     ],
     description: [
-      'Developed a Customer Relationship Management system for managing Baidu Ads customers',
-      'Implemented an APNs (Apple Push Notification Service) Java client library to push notifications to sales',
+      'Contributed to the development of a scalable CRM system, enhancing customer data tracking and improving team workflow efficiency.',
+      'Implemented a Java Client of Apple Push Notification Service (APNs) binary protocol from official docs.',
     ],
   }
 ];
@@ -136,7 +146,7 @@ export const Projects = [
       'React',
       'MUI',
     ],
-    description: <>a tool that monitors and tracks the download statistics of Krew plugins.</>,
+    description: <>A dashboard and automated pipeline that monitors and tracks download statistics for all Krew plugins via GitHub Actions and Release APIs.</>,
   },
   {
     name: 'mental-texas-holdem',
@@ -151,7 +161,7 @@ export const Projects = [
       'WebRTC',
       'Playwright',
     ],
-    description: <>a mental poker implementation of Texas Hold'em</>,
+    description: <>A serverless, peer-to-peer Texas Hold'em game implemented in the browser using WebRTC and the Mental Poker cryptographic protocol to ensure fairness without a trusted third party.</>,
   },
   {
     name: 'Apache Flink',
@@ -164,16 +174,16 @@ export const Projects = [
       'Java',
     ],
     description: <>
-      purposed
+      Proposed and implemented:
       <ul>
         <li>
-          a new method in <code>FlinkKafkaProducer</code> to customize Kafka's <code>transactional.id</code> (see: <Link href="https://cwiki.apache.org/confluence/display/FLINK/FLIP-172:+Support+custom+transactional.id+prefix+in+FlinkKafkaProducer" target="_blank" rel="noopener">FLIP-172</Link>)
+          A new method in <code>FlinkKafkaProducer</code> to customize Kafka's <code>transactional.id</code> (see: <Link href="https://cwiki.apache.org/confluence/display/FLINK/FLIP-172:+Support+custom+transactional.id+prefix+in+FlinkKafkaProducer" target="_blank" rel="noopener">FLIP-172</Link>)
         </li>
         <li>
-          changing log level at runtime (see: <Link href="https://cwiki.apache.org/confluence/display/FLINK/FLIP-210%3A+Change+logging+level+dynamically+at+runtime" target="_blank" rel="noopener">FLIP-210</Link>)
+          Dynamic log level changes at runtime (see: <Link href="https://cwiki.apache.org/confluence/display/FLINK/FLIP-210%3A+Change+logging+level+dynamically+at+runtime" target="_blank" rel="noopener">FLIP-210</Link>)
         </li>
       </ul>
-      and also did some documentation and translations.
+      Also contributed to documentation and Chinese translations.
     </>,
   },
   {
@@ -185,7 +195,7 @@ export const Projects = [
       'Bash',
       'Kubernetes',
     ],
-    description: <>the missing alias command for <code>kubectl</code></>,
+    description: <>A <code>kubectl</code> plugin that adds a native-feeling <code>alias</code> command to manage and use custom aliases within the Kubernetes CLI.</>,
   },
   {
     name: 'Apache Kafka',
@@ -195,7 +205,7 @@ export const Projects = [
       'Apache Kafka',
       'Java',
     ],
-    description: <>bug fix & documentation</>,
+    description: <>Contributed bug fixes and improved technical documentation.</>,
   },
   {
     name: 'kubectl-tmux-exec',
@@ -208,8 +218,8 @@ export const Projects = [
       'tmux',
     ],
     description: <>
-      <p>a kubectl plugin to control multiple pods simultaneously using <code>tmux</code></p>
-      <p>6.9K+ downloads, 130+ stars</p>
+      <p>A <code>kubectl</code> plugin for executing commands across multiple pods simultaneously using <code>tmux</code>, featuring synchronized input and iTerm2 integration.</p>
+      <p>Over 6.9K downloads and 130+ stars on GitHub.</p>
     </>,
   },
 ];
