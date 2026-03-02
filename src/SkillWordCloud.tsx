@@ -71,7 +71,6 @@ export default function SkillWordCloud({ items, title = "Skills & Expertise" }: 
           // Deterministic "random" offset and scale to break the grid
           const hash = getHash(skill);
           const marginVariation = (hash % 10) / 10; // 0 to 0.9
-          const rotateVariation = (hash % 6) - 3; // -3 to 3 degrees
           const scaleVariation = 0.95 + (hash % 11) / 100; // 0.95 to 1.05
 
           return (
@@ -85,7 +84,7 @@ export default function SkillWordCloud({ items, title = "Skills & Expertise" }: 
                 fontSize: { xs: `${fontSize * 0.8}rem`, sm: `${fontSize}rem` },
                 fontWeight: fontWeight,
                 opacity: opacity,
-                transform: `rotate(${rotateVariation}deg) scale(${scaleVariation})`,
+                transform: `scale(${scaleVariation})`,
                 bgcolor: 'background.paper',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
                 border: '1px solid',
@@ -94,7 +93,7 @@ export default function SkillWordCloud({ items, title = "Skills & Expertise" }: 
                 '&:hover': {
                   bgcolor: 'primary.main',
                   color: 'primary.contrastText',
-                  transform: 'scale(1.1) rotate(0deg)',
+                  transform: 'scale(1.1)',
                   zIndex: 10,
                   opacity: 1
                 }

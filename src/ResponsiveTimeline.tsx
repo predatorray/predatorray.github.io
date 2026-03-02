@@ -6,6 +6,7 @@ import TimelineDot from "@mui/lab/TimelineDot";
 import TimelineConnector from "@mui/lab/TimelineConnector";
 import TimelineContent from "@mui/lab/TimelineContent";
 import TimelineItem from "@mui/lab/TimelineItem";
+import {useMediaQuery, useTheme} from "@mui/material";
 
 export function ResponsiveTimelineItem(
   {
@@ -22,10 +23,42 @@ export function ResponsiveTimelineItem(
     lastItem?: boolean;
   }
 ) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const {
     sx: oppositeContentSx,
     ...otherOppositeContentProps
   } = oppositeContentProps ?? {};
+
+  if (isMobile) {
+    return (
+      <TimelineItem sx={{ minHeight: 'auto', flexDirection: 'column' }}>
+        <TimelineOppositeContent
+          sx={{
+            textAlign: 'left',
+            pt: 2,
+            pb: 0,
+            pl: 0,
+            mb: 0.5,
+            ...oppositeContentSx,
+          }}
+          {...otherOppositeContentProps}
+        >
+          {oppositeContent}
+        </TimelineOppositeContent>
+        <div style={{ display: 'flex', width: '100%' }}>
+          <TimelineSeparator sx={{ display: 'none' }}>
+            <TimelineDot />
+            { !lastItem && <TimelineConnector /> }
+          </TimelineSeparator>
+          <TimelineContent sx={{ pl: 0, pb: 0, width: '100%' }}>
+            {children}
+          </TimelineContent>
+        </div>
+      </TimelineItem>
+    );
+  }
+
   return (
     <TimelineItem sx={{ minHeight: 120 }}>
       <TimelineOppositeContent
@@ -63,12 +96,15 @@ export function ResponsiveTimelineItem(
 }
 
 export function ResponsiveTimeline({ children }: { children: ReactNode }) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <Timeline
       sx={{
+        p: isMobile ? 0 : undefined,
         [`& .${timelineOppositeContentClasses.root}`]: {
           flex: {
-            xs: 0,
+            xs: isMobile ? 'none' : 0,
             sm: 0.2,
           },
         },
