@@ -2,7 +2,7 @@ import {Box, Button, Stack, Typography} from "@mui/material";
 import React, {useState} from "react";
 import WorkIcon from '@mui/icons-material/Work'
 import SchoolIcon from '@mui/icons-material/School';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import WorkspacesIcon from '@mui/icons-material/Workspaces';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import FooterLinks from "./FooterLinks";
 import {ResponsiveTimeline, ResponsiveTimelineItem} from "./ResponsiveTimeline";
@@ -13,14 +13,43 @@ import {Education, Experience, Projects} from "./constants";
 
 function ExpandOrCollapse({ children }: { children: React.ReactNode }) {
   const [expanded, setExpanded] = useState(false);
-  return expanded ? (
-    <>
-      {children}
-      <Button variant="text" size="small" sx={{ fontSize: '0.75rem', textDecoration: "underline", minWidth: 'initial', textTransform: 'none' }} onClick={() => setExpanded(false)}>less</Button>
-    </>
-  ) : (
-    <Button variant="text" size="small" sx={{ fontSize: '0.75rem', textDecoration: "underline", minWidth: 'initial', textTransform: 'none' }} onClick={() => setExpanded(true)}>more</Button>
-  )
+  const maxHeight = '8rem'; // Roughly 5 lines of text (5 * 1.6)
+
+  return (
+    <Box sx={{ position: 'relative' }}>
+      <Box sx={{
+        maxHeight: expanded ? 'none' : maxHeight,
+        overflow: 'hidden',
+        position: 'relative',
+        transition: 'max-height 0.3s ease-in-out',
+        ...( !expanded && {
+          WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)',
+          maskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)'
+        })
+      }}>
+        {children}
+      </Box>
+      <Button
+        variant="text"
+        size="small"
+        sx={{
+          fontSize: '0.75rem',
+          textDecoration: "underline",
+          minWidth: 'initial',
+          textTransform: 'none',
+          mt: 0.5,
+          p: 0,
+          '&:hover': {
+            background: 'transparent',
+            textDecoration: "underline",
+          }
+        }}
+        onClick={() => setExpanded(!expanded)}
+      >
+        {expanded ? 'less' : 'more'}
+      </Button>
+    </Box>
+  );
 }
 
 export default function ResumePage() {
@@ -135,9 +164,9 @@ export default function ResumePage() {
                         alignItems: 'baseline',
                         mb: i === e.positions.length - 1 ? 0 : 1
                       }}>
-                        <NavigateNextIcon sx={{ fontSize: '0.9rem', color: 'secondary.main', mr: 1, verticalAlign: 'middle' }} />
+                        <WorkspacesIcon sx={{ fontSize: '0.9rem', color: 'secondary.main', mr: 1, verticalAlign: 'middle' }} />
                         <Typography variant="body2" color="textSecondary" sx={{ fontWeight: 550, flexGrow: 1 }}>{p.name}</Typography>
-                        <Typography variant="caption" color="secondary" sx={{ ml: 1, whiteSpace: 'nowrap' }}>{p.from}</Typography>
+                        <Typography variant="caption" color="secondary" sx={{ ml: 1, whiteSpace: 'nowrap' }}>{p.from} - {p.to}</Typography>
                       </Box>
                     ))
                   }

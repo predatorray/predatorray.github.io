@@ -15,7 +15,7 @@ export const Experience = [
     company: 'Amazon',
     location: 'Vancouver, BC, Canada',
     type: 'Full-time',
-    tenure: '2 yrs',
+    tenure: '3 yrs',
     skills: [
       'Java',
       'Typescript',
@@ -77,7 +77,7 @@ export const Experience = [
     company: 'Baidu',
     location: 'Shanghai, China',
     type: 'Full-time',
-    tenure: '6 yrs',
+    tenure: '5 yrs',
     skills: [
       'Java',
       'Docker',
@@ -219,7 +219,6 @@ export const Projects = [
     ],
     description: <>
       <p>A <code>kubectl</code> plugin for executing commands across multiple pods simultaneously using <code>tmux</code>, featuring synchronized input and iTerm2 integration.</p>
-      <p>Over 6.9K downloads and 130+ stars on GitHub.</p>
     </>,
   },
 ];

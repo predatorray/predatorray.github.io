@@ -52,7 +52,7 @@ function App() {
             }/>
             <Route path="/resume" element={
               <>
-                <HeaderBar current="Resume" displaysTitle={true} />
+                <HeaderBar current="Résumé" displaysTitle={true} />
                 <ResumePage/>
               </>
             }/>

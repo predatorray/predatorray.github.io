@@ -14,7 +14,7 @@ import React, {useState} from "react";
 
 export type HeaderName =
   | 'Home'
-  | 'Resume'
+  | 'Résumé'
   | 'Projects'
   | 'Gallery'
   | 'Contact'
@@ -33,7 +33,7 @@ const headerLinks: {
     href: '#/projects',
   },
   {
-    name: 'Resume',
+    name: 'Résumé',
     href: '#/resume',
   },
   {
