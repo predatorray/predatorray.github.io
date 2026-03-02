@@ -142,7 +142,7 @@ export const Projects = [
       'React',
       'MUI',
     ],
-    description: <>A dashboard and automated pipeline that monitors and tracks download statistics for all Krew plugins via GitHub Actions and Release APIs.</>,
+    description: <>The official dashboard and automated pipeline that monitors and tracks plugin usage analytics for <code>kubectl krew</code> for all Krew plugins via GitHub Actions and Release APIs.</>,
   },
   {
     name: 'mental-texas-holdem',
