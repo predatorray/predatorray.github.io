@@ -10,6 +10,7 @@ import SkillChip from "./SkillChip";
 import SkillWordCloud from "./SkillWordCloud";
 import MainContainer from "./MainContainer";
 import {Education, Experience, Projects} from "./constants";
+import {calculateTenure, formatTenure} from "./utils/dateUtils";
 
 function ExpandOrCollapse({ children }: { children: React.ReactNode }) {
   const [expanded, setExpanded] = useState(false);
@@ -100,7 +101,14 @@ export default function ResumePage() {
                 </Typography>
                 <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>{e.company}</Typography>
                 <Typography variant="subtitle2" color="textSecondary" sx={{ fontWeight: 500, mb: 1 }}>
-                  {e.type} &middot; {e.tenure}
+                  {
+                    (() => {
+                      const from = e.positions[e.positions.length - 1].from;
+                      const to = e.positions[0].to;
+                      const { years, months } = calculateTenure(from, to);
+                      return `${e.type} \u00b7 ${formatTenure(years, months)}`;
+                    })()
+                  }
                 </Typography>
                 <Typography variant="body2" color="textSecondary" sx={{ mb: 2, display: { xs: 'flex', sm: 'none' }, alignItems: 'center' }}>
                   <LocationOnIcon sx={{ fontSize: '0.9rem', mr: 0.5 }} />

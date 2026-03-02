@@ -4,8 +4,8 @@ export const Education = [
   {
     institution: 'Southeast University',
     location: 'Nanjing, China',
-    from: '2010',
-    to: '2014',
+    from: 'Sep 2010',
+    to: 'Jun 2014',
     degree: 'Bachelor of Software Engineering',
   }
 ];
@@ -15,7 +15,6 @@ export const Experience = [
     company: 'Amazon',
     location: 'Vancouver, BC, Canada',
     type: 'Full-time',
-    tenure: '3 yrs',
     skills: [
       'Java',
       'Typescript',
@@ -40,7 +39,6 @@ export const Experience = [
     company: 'eBay',
     location: 'Shanghai, China',
     type: 'Full-time',
-    tenure: '3 yrs and 3 mos',
     skills: [
       'Java',
       'Kubernetes',
@@ -77,7 +75,6 @@ export const Experience = [
     company: 'Baidu',
     location: 'Shanghai, China',
     type: 'Full-time',
-    tenure: '5 yrs',
     skills: [
       'Java',
       'Docker',
@@ -115,7 +112,6 @@ export const Experience = [
     company: 'Baidu',
     location: 'Shanghai, China',
     type: 'Intern',
-    tenure: '1 yr',
     skills: [
       'Java',
       'APNs',
