@@ -132,6 +132,20 @@ export const Experience = [
 
 export const Projects = [
   {
+    name: 'dandelion-mesh',
+    type: 'Author',
+    when: 'Apr 2026',
+    href: 'https://github.com/predatorray/dandelion-mesh',
+    skills: [
+      'Typescript',
+      'WebRTC',
+      'Raft',
+      'Cryptography',
+      'P2P',
+    ],
+    description: <>A fault-tolerant, serverless peer-to-peer mesh network library for browser applications, using <b>WebRTC</b> for transport, <b>Raft</b> consensus for leader election and ordered log replication, and hybrid RSA-OAEP/AES-GCM encryption for private communications.</>,
+  },
+  {
     name: 'krew-index-tracker',
     type: 'Author',
     when: 'Jan 2025',
@@ -142,7 +156,7 @@ export const Projects = [
       'React',
       'MUI',
     ],
-    description: <>The official dashboard and automated pipeline that monitors and tracks plugin usage analytics for <code>kubectl krew</code> for all Krew plugins via GitHub Actions and Release APIs.</>,
+    description: <>The official dashboard and automated pipeline that monitors and tracks plugin usage analytics for <code>kubectl krew</code> for all Krew plugins via <b>GitHub Actions</b> and Release APIs.</>,
   },
   {
     name: 'mental-texas-holdem',
@@ -157,7 +171,7 @@ export const Projects = [
       'WebRTC',
       'Playwright',
     ],
-    description: <>A serverless, peer-to-peer Texas Hold'em game implemented in the browser using WebRTC and the Mental Poker cryptographic protocol to ensure fairness without a trusted third party.</>,
+    description: <>A serverless, peer-to-peer Texas Hold'em game implemented in the browser using <b>WebRTC</b> and the <b>Mental Poker</b> cryptographic protocol to ensure fairness without a trusted third party.</>,
   },
   {
     name: 'Apache Flink',
