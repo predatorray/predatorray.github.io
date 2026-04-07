@@ -24,6 +24,10 @@ export default function ContactPage() {
           },
         },
         'svg': {
+          xs: {
+            width: 40,
+            height: 40,
+          },
           sm: {
             width: 40,
             height: 40,
