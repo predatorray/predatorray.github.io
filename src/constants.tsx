@@ -132,6 +132,21 @@ export const Experience = [
 
 export const Projects = [
   {
+    name: 'Rendezvous',
+    type: 'Author',
+    when: 'May 2026',
+    href: 'https://github.com/predatorray/rendezvous',
+    skills: [
+      'Typescript',
+      'React',
+      'MUI',
+      'WebRTC',
+      'PeerJS',
+      'P2P',
+    ],
+    description: <>A serverless, Zoom-like video conferencing web app requiring no accounts or passcodes, built with <b>React</b> and <b>WebRTC</b>. It uses <b>PeerJS</b> for signaling and a host-centric star topology, where the host relays messages and streams to scale efficiently while remaining fully deployable as a static site.</>,
+  },
+  {
     name: 'dandelion-mesh',
     type: 'Author',
     when: 'Apr 2026',
