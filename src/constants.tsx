@@ -26,6 +26,9 @@ export const Experience = [
       'GenAI',
     ],
     description: [
+      'Led the design, refactoring, and operational excellence of a large-scale financial auditing platform that detects and prevents vendor-related financial leakages across Amazon’s retail systems.',
+      'Migrated the ETL engine from Redshift to Apache Spark, reducing runtime and compute cost while eliminating recurring failures.',
+      'Refactored the OpenSearch (ElasticSearch) indexing subsystem for shipment and transaction search, introducing hot–warm–cold tiering and partition-based retention to cut storage costs and improve query performance.',
     ],
     positions: [
       {
