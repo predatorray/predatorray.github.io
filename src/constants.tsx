@@ -12,6 +12,27 @@ export const Education = [
 
 export const Experience = [
   {
+    company: 'Asana',
+    location: 'Vancouver, BC, Canada',
+    type: 'Full-time',
+    skills: [
+      'AWS',
+      'Databricks',
+      'Apache Spark',
+    ],
+    description: [
+      'Data Infrastructure',
+      'Logging & Experiments',
+    ],
+    positions: [
+      {
+        name: 'Software Engineer',
+        from: 'Aug 2026',
+        to: 'Present',
+      },
+    ]
+  },
+  {
     company: 'Amazon',
     location: 'Vancouver, BC, Canada',
     type: 'Full-time',
@@ -34,7 +55,7 @@ export const Experience = [
       {
         name: 'Software Development Engineer II',
         from: 'Aug 2022',
-        to: 'Present',
+        to: 'Aug 2026',
       },
     ]
   },
