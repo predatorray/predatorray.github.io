@@ -1,10 +1,11 @@
 import React, {FormEvent, useEffect, useRef, useState} from 'react';
 import {useLocation} from 'react-router-dom';
-import {Box, Button, CircularProgress, Fab, IconButton, Paper, Stack, TextField, Typography} from '@mui/material';
+import {Box, CircularProgress, Fab, IconButton, Paper, Stack, TextField, Tooltip, Typography} from '@mui/material';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from '@mui/icons-material/Send';
 import StopIcon from '@mui/icons-material/Stop';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import {
   answerQuestion, boundedHistory, MAX_QUESTION_LENGTH, Message, ModelAPI, MODEL_OPTIONS,
   readHistory, saveHistory,
@@ -156,64 +157,71 @@ export default function PersonalChatbot() {
       bottom: `calc(max(12px, env(safe-area-inset-bottom)) + ${viewport.bottom}px)`,
       zIndex: theme => theme.zIndex.drawer - 1,
     }}>
-      <Fab ref={launcher} variant="extended" aria-label="Chat with Wenhao’s AI"
+      <Fab ref={launcher} size="medium" aria-label="Chat with Wenhao’s AI"
            aria-expanded={open} aria-controls={open ? 'personal-chat' : undefined}
            onClick={() => setOpen(value => !value)}
            sx={{display: open ? 'none' : 'inline-flex', bgcolor: 'primary.main', color: '#fff',
              textTransform: 'none', '&:hover': {bgcolor: '#333'}}}>
-        <ChatBubbleOutlineIcon sx={{mr: 1}} /> Ask Wenhao
+        <ChatBubbleOutlineIcon />
       </Fab>
       {open && (
         <Paper id="personal-chat" role="dialog" aria-modal="false" aria-labelledby="personal-chat-title"
-               elevation={8} onKeyDown={event => {
+               elevation={0} onKeyDown={event => {
                  if (event.key === 'Escape') { event.stopPropagation(); close(); }
                }}
-               sx={{width: {xs: 'calc(100vw - 24px)', sm: 380},
-                 height: Math.max(0, Math.min(560, viewport.height - 32)),
+               sx={{width: {xs: 'calc(100vw - 24px)', sm: 360},
+                 height: Math.max(0, Math.min(480, viewport.height - 32)),
                  boxSizing: 'border-box',
                  display: 'flex', flexDirection: 'column', borderRadius: 3,
-                 border: '1px solid', borderColor: 'divider', overflow: 'hidden'}}>
-          <Stack direction="row" alignItems="center" sx={{p: 1.5, borderBottom: '1px solid', borderColor: 'divider'}}>
-            <Box sx={{flex: 1, minWidth: 0}}>
-              <Typography id="personal-chat-title" fontWeight={700}>Ask Wenhao</Typography>
-              <Typography variant="caption" color="text.secondary">AI version · {pageTitle}</Typography>
-            </Box>
-            <Button size="small" onClick={clear} sx={{textTransform: 'none', minHeight: 44}}>Clear</Button>
-            <IconButton aria-label="Close chat" onClick={close} sx={{width: 44, height: 44}}><CloseIcon /></IconButton>
+                 border: '1px solid', borderColor: 'divider', overflow: 'hidden',
+                 boxShadow: '0 8px 40px rgba(0,0,0,0.10)'}}>
+          <Stack direction="row" alignItems="center" sx={{pl: 2.5, pr: 1, py: 1}}>
+            <Typography id="personal-chat-title" fontWeight={600} sx={{flex: 1}}>Ask Wenhao</Typography>
+            <Tooltip title="AI version of Wenhao. Runs in your browser. History stays in this tab; public GitHub lookups need no sign-in."
+                     describeChild enterTouchDelay={0}>
+              <Typography component="span" tabIndex={0} variant="caption" aria-label="About this AI chat"
+                          sx={{color: 'text.secondary', mr: 1, cursor: 'help'}}>AI</Typography>
+            </Tooltip>
+            <Tooltip title="Clear chat">
+              <IconButton aria-label="Clear" onClick={clear} sx={{width: 44, height: 44, color: 'text.secondary'}}>
+                <RestartAltIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <IconButton aria-label="Close chat" onClick={close} sx={{width: 44, height: 44, color: 'text.secondary'}}>
+              <CloseIcon fontSize="small" />
+            </IconButton>
           </Stack>
           <Box ref={messages} role="log" aria-label="Conversation" aria-live="polite" aria-relevant="additions"
-               sx={{flex: 1, minHeight: 0, overflowY: 'auto', overscrollBehavior: 'contain', p: 2}}>
-            <Typography variant="body2" color="text.secondary" sx={{mb: 2, lineHeight: 1.6}}>
-              Hi, I’m Wenhao’s AI version. Ask about my work, projects, photography, or this site.
-              {' '}Answers run in your browser and may be imperfect.
-            </Typography>
+               sx={{flex: 1, minHeight: 0, overflowY: 'auto', overscrollBehavior: 'contain', px: 2.5, py: 2}}>
+            {!history.length && !pending && (
+              <Box sx={{height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                <Typography variant="body2" color="text.secondary">Ask about my work or this site.</Typography>
+              </Box>
+            )}
             {[...history, ...(pending ? [{role: 'user' as const, content: pending}] : [])].map((message, i) => (
-              <Box key={i} sx={{mb: 1.5, ml: message.role === 'user' ? 3 : 0, mr: message.role === 'assistant' ? 3 : 0,
-                p: 1.5, borderRadius: 2, bgcolor: message.role === 'user' ? '#121212' : '#f3f4f5',
-                color: message.role === 'user' ? '#fff' : 'text.primary'}}>
-                <Typography variant="caption" component="p" sx={{fontWeight: 600, mb: 0.5}}>
-                  {message.role === 'user' ? 'You' : 'Wenhao · AI'}
-                </Typography>
-                <Typography variant="body2" sx={{whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', lineHeight: 1.6}}>
+              <Box key={i} aria-label={message.role === 'user' ? 'You' : 'Wenhao · AI'}
+                   sx={{mb: 2.5, ml: message.role === 'user' ? 'auto' : 0,
+                     maxWidth: message.role === 'user' ? '85%' : '100%', width: 'fit-content',
+                     px: message.role === 'user' ? 1.5 : 0, py: message.role === 'user' ? 1 : 0,
+                     borderRadius: 2, bgcolor: message.role === 'user' ? '#f3f4f5' : 'transparent'}}>
+                <Typography variant="body2" sx={{whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', lineHeight: 1.7}}>
                   {message.content}
                 </Typography>
               </Box>
             ))}
           </Box>
-          <Box role="status" sx={{px: 2}}>
-            {busy ? <Stack direction="row" spacing={1} alignItems="center">
-              <CircularProgress size={12} color="inherit" />
-              <Typography variant="caption">Thinking…</Typography>
-            </Stack> : <Typography variant="caption">{notice}</Typography>}
+          <Box role="status" sx={{px: 2.5}}>
+            {busy ? <CircularProgress size={14} color="inherit" aria-label="Thinking" sx={{mb: 1.5}} /> :
+              notice && <Typography variant="caption" color="text.secondary">{notice}</Typography>}
           </Box>
-          <Box component="form" onSubmit={submit} sx={{p: 1.5}}>
+          <Box component="form" onSubmit={submit} sx={{px: 2, py: 1, borderTop: '1px solid', borderColor: 'divider'}}>
             <Stack direction="row" spacing={1} alignItems="flex-end">
-              <TextField inputRef={input} label="Ask about Wenhao" placeholder="What have you built?"
-                         InputLabelProps={{shrink: true}}
+              <TextField inputRef={input} placeholder="Ask a question…" variant="standard"
+                         InputProps={{disableUnderline: true}}
                          value={draft} onChange={event => setDraft(event.target.value)}
                          multiline minRows={1} maxRows={3} fullWidth size="small"
-                         inputProps={{maxLength: MAX_QUESTION_LENGTH}}
-                         sx={{'& textarea': {fontSize: 16}}}
+                         inputProps={{maxLength: MAX_QUESTION_LENGTH, 'aria-label': 'Ask about Wenhao'}}
+                         sx={{py: 1, '& textarea': {fontSize: 16}}}
                          onKeyDown={event => {
                            if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) {
                              event.preventDefault();
@@ -226,9 +234,6 @@ export default function PersonalChatbot() {
                 <IconButton type="submit" aria-label="Send message" disabled={!draft.trim()}
                             sx={{width: 44, height: 44}}><SendIcon /></IconButton>}
             </Stack>
-            <Typography variant="caption" color="text.secondary" component="p" sx={{mt: 1, lineHeight: 1.4}}>
-              History stays in this tab until it closes. Public GitHub lookups use no sign-in.
-            </Typography>
           </Box>
         </Paper>
       )}
