@@ -15,6 +15,7 @@ import ResumePage from "./ResumePage";
 import ProjectsPage from "./ProjectsPage";
 import ContactPage from "./ContactPage";
 import Gallery from "./Gallery";
+import PersonalChatbot from "./chatbot/PersonalChatbot";
 
 const theme = createTheme({
   palette: {
@@ -75,6 +76,7 @@ function App() {
               </>
             }/>
           </Routes>
+          <PersonalChatbot />
         </Router>
       </ThemeProvider>
     </>
